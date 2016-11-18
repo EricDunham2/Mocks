@@ -1,0 +1,161 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.projects.mocks.fragments.DetailsFragment"
+    android:id="@+id/DetailsHigh">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:id="@+id/DetailsHigh"
+        android:layout_width="100dp"
+        android:layout_below="@+id/rdogrp"
+        android:layout_alignStart="@+id/rdogrp"
+        android:layout_marginTop="11dp"
+        android:layout_height="25dp" />
+
+    <TextView
+        android:id="@+id/DetailsCompany"
+        android:layout_height="50dp"
+        android:layout_below="@+id/Symbol"
+        android:layout_alignParentStart="true"
+        android:layout_width="100dp"
+        android:layout_marginBottom="10dp"
+        android:text="Company"
+        android:textSize="30sp"
+        android:textAlignment="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_alignParentEnd="true" />
+
+    <RadioGroup
+        android:id="@+id/rdogrp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_below="@+id/DetailsChart"
+        android:layout_alignParentEnd="true">
+
+        <RadioButton
+            android:id="@+id/rtbnDay"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:text="Day" />
+
+        <RadioButton
+            android:id="@+id/rbtnWeek"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:button="@null"
+            android:gravity="center"
+            android:text="Week" />
+
+        <RadioButton
+            android:id="@+id/rtbnMonth"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:button="@null"
+            android:gravity="center"
+            android:text="Month" />
+
+        <RadioButton
+            android:id="@+id/rbtnYear"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:button="@null"
+            android:gravity="center"
+            android:text="Year" />
+
+        <RadioButton
+            android:id="@+id/rtbnFiveYear"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:text="5 Years" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/DetailsLow"
+        android:layout_width="100dp"
+        android:layout_height="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/DetailsHigh"
+        android:layout_alignStart="@+id/lineChart3"
+        android:layout_marginTop="11dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:id="@+id/Symbol"
+        android:layout_height="75dp"
+        tools:text="TEST"
+        android:textSize="50sp"
+        android:textAlignment="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="13dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/DetailsClose"
+        android:layout_width="100dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/DetailsLow"
+        android:layout_height="60dp"
+        android:text="788.88"
+        android:textAlignment="center"
+        android:textSize="25dp" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:layout_width="match_parent"
+        android:id="@+id/DetailsChart"
+        android:layout_height="200dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@+id/DetailsCompany"
+        android:layout_alignParentStart="true"></com.github.mikephil.charting.charts.LineChart>
+
+    <TextView
+        android:text="7.00%"
+        android:id="@+id/DetailsPercent"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@+id/DetailsClose"
+        android:layout_alignTop="@+id/DetailsClose"
+        android:layout_toStartOf="@+id/DetailsClose"
+        android:layout_width="150dp"
+        android:textAlignment="center"
+        android:textSize="30dp" />
+
+    <Button
+        android:text="Invest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/DetailsInvest"
+        android:layout_marginBottom="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/DetailsClose" />
+
+</RelativeLayout>

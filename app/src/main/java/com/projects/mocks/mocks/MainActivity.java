@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
@@ -20,16 +21,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
-
+import com.projects.mocks.classes.*;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.YAxis;
 import com.projects.mocks.fragments.InventoryFragment;
 import com.projects.mocks.fragments.LeaderboardFragment;
 import com.projects.mocks.fragments.MarketFragment;
 import com.projects.mocks.fragments.OverviewFragment;
 import com.projects.mocks.fragments.SettingsFragment;
 import com.projects.mocks.fragments.ShopFragment;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+
+import yahoofinance.Stock;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
@@ -41,7 +55,18 @@ public class MainActivity extends AppCompatActivity
     private ShopFragment sFrag;
     private LeaderboardFragment lFrag;
     private SettingsFragment settingsFrag;
-
+    public ArrayList<Stock> output = new ArrayList<>();
+    public ArrayAdapter<Stock> adapter;
+    public ListView stocklv;
+    public EditText inputStock;
+    public LineChart chart;
+    public boolean mPaused = false;
+    public boolean mFinished = false;
+    Thread updateThread;
+    EditText searchFor;
+    EditText newUser;
+    //ArrayList<Stock> visibleListViewStocks = new ArrayList<>();
+    String activeStockDetails = "";
     private FloatingActionButton fab;
     private ProgressDialog progress;
     public static Activity main;
@@ -306,4 +331,144 @@ public class MainActivity extends AppCompatActivity
                 })
                 .setNegativeButton("No", null).show();
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPaused = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onPause();
+        mPaused = false;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //inputStock = (EditText) findViewById(R.id.editText3);
+        stocklv = (ListView) findViewById(R.id.AllStocks);
+        chart = (LineChart)findViewById(R.id.DetailsChart);
+        searchFor = (EditText)findViewById(R.id.searchListView);
+        //newUser = (EditText)findViewById(R.id.inputUsername);
+        setChartParams();
+        setStockListView();
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        stocklv.setAdapter(adapter);
+        ThreadStock st = new ThreadStock(this);
+        st.mth = "Update";
+        updateThread = new Thread(st);
+        updateThread.start();
+    }
+    public void setStockListView()
+    {
+        stocklv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Stock clk = (Stock)stocklv.getItemAtPosition(position);
+                activeStockDetails = clk.getSymbol();
+                setDateline("WEEK");
+            }
+        });
+
+        stocklv.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,int visibleItemCount, int totalItemCount) {
+                int firstVisibleRow = stocklv.getFirstVisiblePosition();
+                int lastVisibleRow = stocklv.getLastVisiblePosition();
+
+                for(int i=firstVisibleRow;i<=lastVisibleRow;i++)
+                {
+                    //ADD CODE FOR BETTER UPDATING
+                }
+            }
+        });
+    }
+
+    public void setDateline(String timespan)
+    {
+        ThreadStock st = new ThreadStock(this);
+        Calendar yes = Calendar.getInstance();
+        Calendar tdy = Calendar.getInstance();
+        switch (timespan) {
+            case "WEEK"://Sunday, Monday, Happy Days,Tuesday, Wednesday, Happy Days,Thursday, Friday, Happy Days, The weekend comes, my cycle hums Ready to race to you
+                yes.add(Calendar.DAY_OF_MONTH, -7); //Days of stock data can be missing so number of points on graph can be off
+                break;
+            case "MONTH":
+                yes.add(Calendar.MONTH, -1);
+                break;
+            case "YEAR":
+                yes.add(Calendar.YEAR, -1);
+                break;
+            case "5YEAR":
+                yes.add(Calendar.YEAR, -5);
+                break;
+        }
+
+        st.mth  = "History";
+        st.from = yes;
+        st.to = tdy;
+        st.sym = activeStockDetails;
+        Thread t = new Thread(st);
+        t.start();
+    }
+
+    public void addU(View view)
+    {
+        ThreadLeaderboard tl = new ThreadLeaderboard();
+        tl.username = newUser.getText().toString();
+        tl.method = "ADD";
+        Thread t = new Thread(tl);
+        t.start();
+    }
+
+    public void updateU(View view)
+    {
+        ThreadLeaderboard tl = new ThreadLeaderboard();
+        tl.username = "Cristian";
+        tl.roi = new BigDecimal(10000000);
+        tl.method = "UPDATE";
+        Thread t = new Thread(tl);
+        t.start();
+    }
+
+    public void leaderboard(View view)
+    {
+        ThreadLeaderboard tl = new ThreadLeaderboard();
+        tl.username = "Cristian";
+        tl.method = "GET";
+        Thread t = new Thread(tl);
+        t.start();
+    }
+
+    public void setChartParams()
+    {
+        chart.setBackgroundColor(Color.argb(255,21,21,21));
+        chart.getAxisRight().setDrawLabels(false);
+        chart.getAxisLeft().setDrawLabels(false);
+        chart.getXAxis().setDrawLabels(false);
+        chart.getLegend().setEnabled(false);
+        chart.getAxisLeft().setDrawGridLines(false);
+        chart.getXAxis().setDrawGridLines(false);
+        YAxis yAxis = chart.getAxisLeft();
+        yAxis.setDrawGridLines(false);
+        yAxis = chart.getAxisRight();
+        yAxis.setDrawGridLines(false);
+        chart.getAxisLeft().setTextColor(Color.WHITE); // left y-axis
+    }
+
+    public void test(View view)
+    {
+        ThreadStock st = new ThreadStock(this);
+        st.mth  = "Add";
+        Thread t = new Thread(st);
+        t.start();
+    }
+
+
 }
