@@ -1,0 +1,9 @@
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+                 android:color="?attr/selectButtonColor">
+<item>
+    <shape xmlns:android="http://schemas.android.com/apk/res/android">
+        <corners android:radius="0dp" />
+        <solid android:color="#fff" />
+    </shape>
+</item>
+</ripple>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="Theme">
+        <attr name="bgColor" format="color"/>
+        <attr name="txtColor" format="color"/>
+        <attr name="selectNavColor" format="color"/>
+        <attr name="selectButtonColor" format="color"/>
+    </declare-styleable>
+</resources>

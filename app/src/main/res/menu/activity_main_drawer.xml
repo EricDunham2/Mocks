@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_overview"
+            android:icon="@drawable/ic_menu_earth"
+            android:title="Overview"
+            />
+        <item
+            android:id="@+id/nav_market"
+            android:icon="@drawable/ic_menu_market"
+            android:title="Market"/>
+        <item
+            android:id="@+id/nav_inventory"
+            android:icon="@drawable/ic_menu_inventory"
+            android:title="Inventory"/>
+        <item
+            android:id="@+id/nav_shop"
+            android:icon="@drawable/ic_menu_shop"
+            android:title="Shop"/>
+        <item
+            android:id="@+id/nav_leaderboard"
+            android:icon="@drawable/ic_menu_leaderboard"
+            android:title="Leaderboards"/>
+        <item
+            android:title=""
+            android:checkable="false"
+            android:enabled="false"/>
+        <item
+            android:id="@+id/menu_none"
+            android:title=""
+            android:visible="false"/>
+    </group>
+
+</menu>

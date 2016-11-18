@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="User Interface" >
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefSwitchTheme"
+            android:id="@+id/themeSwitch"
+            android:summary="Use a darker style for the application."
+            android:title="Use Dark Theme">
+        </SwitchPreference>
+
+    </PreferenceCategory>
+
+    <!--<PreferenceCategory android:title="Category 2 Title" >-->
+        <!--&lt;!&ndash;<CheckBoxPreference&ndash;&gt;-->
+            <!--&lt;!&ndash;android:defaultValue="false"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:key="prefSendReport"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:summary="@string/pref_send_report_summary"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:title="@string/pref_send_report" >&ndash;&gt;-->
+        <!--&lt;!&ndash;</CheckBoxPreference>&ndash;&gt;-->
+
+        <!--&lt;!&ndash;<EditTextPreference&ndash;&gt;-->
+            <!--&lt;!&ndash;android:title="Edit Text Preference"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:summary="Summary"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:key="prefUsername"/>&ndash;&gt;-->
+
+        <!--&lt;!&ndash;<ListPreference&ndash;&gt;-->
+            <!--&lt;!&ndash;android:key="prefSyncFrequency"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:entries="@array/syncFrequency"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:summary="@string/pref_sync_frequency_summary"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:entryValues="@array/syncFrequencyValues"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:title="@string/pref_sync_frequency" />&ndash;&gt;-->
+    <!--</PreferenceCategory>-->
+
+</PreferenceScreen>
