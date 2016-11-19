@@ -5,10 +5,10 @@
              tools:context="com.projects.mocks.fragments.LeaderboardFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Leaderboard Fragment"
-        android:textColor="?attr/txtColor"/>
+        android:id="@+id/leaderboardListView" />
 
 </FrameLayout>

@@ -1,20 +1,36 @@
 package com.projects.mocks.fragments;
 
-
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
 import com.projects.mocks.mocks.MainActivity;
-import com.projects.mocks.mocks.R;
+import com.projects.mocks.classes.*;
+import com.projects.mocks.mocks.R; // WHY!!!!!!!!!!!!!!!!!!!!!
+import java.util.ArrayList;
+import yahoofinance.Stock;
+import yahoofinance.YahooFinance;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class MarketFragment extends Fragment
 {
+    private ListView stocklv;
+    public ArrayList<Stock> output;
+    public ArrayAdapter<Stock> adapter;
+    public Thread updateThread;
+    EditText searchFor;
     //DON'T EDIT THIS. Anything you want done in a fragment should go in the "onViewCreated" function.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,6 +47,61 @@ public class MarketFragment extends Fragment
         //used for back stacking and making sure the correct nav item is selected.
         if(MainActivity.navigationView != null)
             MainActivity.navigationView.getMenu().findItem(R.id.nav_market).setChecked(true);
+
+        output = new ArrayList<>();
+       // chart = (LineChart)getView().findViewById(R.id.DetailsChart);
+        //searchFor = (EditText) getView().findViewById(R.id.searchListView);
+        stocklv = (ListView) getView().findViewById(R.id.AllStocks);
+        setStockListView();
+        adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
+        stocklv.setAdapter(adapter);
+        ThreadParams tp = new ThreadParams(output,adapter);
+        ThreadStock threadStock = new ThreadStock("ADD",getContext(),tp);
+        threadStock.sym = "AAPL"; // TODO Replace with for loop to go through all stocks
+        Thread thread = new Thread(threadStock);
+        thread.start();
+
+        ThreadStock st = new ThreadStock("UPDATE_MULTIPLE",getContext(),tp);
+        updateThread = new Thread(st);
+        updateThread.start();
     }
 
+    private void setStockListView()
+    {
+        stocklv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Stock clk = (Stock)stocklv.getItemAtPosition(position);
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
+                Bundle bundle = new Bundle();
+                bundle.putString("selectedStock",clk.getSymbol());
+                DetailsFragment detailsFragment = new DetailsFragment();
+                detailsFragment.setArguments(bundle);
+                ft.replace(currentFragment.getId(),detailsFragment,"F_DETAILS");
+                ft.commit();
+                //Open Details Fragment
+                //Pass it Params of the symbol.
+            }
+        });
+
+        stocklv.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,int visibleItemCount, int totalItemCount) {
+                int firstVisibleRow = stocklv.getFirstVisiblePosition();
+                int lastVisibleRow = stocklv.getLastVisiblePosition();
+
+                for(int i=firstVisibleRow;i<=lastVisibleRow;i++)
+                {
+                    //ADD CODE FOR BETTER UPDATING
+                }
+            }
+        });
+    }
 }

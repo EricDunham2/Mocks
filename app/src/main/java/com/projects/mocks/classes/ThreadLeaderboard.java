@@ -19,13 +19,13 @@ public class ThreadLeaderboard implements Runnable {
     public String username;
     public BigDecimal roi ;
     private int responseCode = 0;
-    public User[] leaderboard = new User[11];
+    public User[] topPlayers = new User[11];
     private Gson gson = new Gson();
 
     @Override
     public void run() {
         if (method == "GET")
-            leaderboard = get();
+            topPlayers = get();
         else if(method == "UPDATE")
             responseCode = update();
         else if (method == "ADD")

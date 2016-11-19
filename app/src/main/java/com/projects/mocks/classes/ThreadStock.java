@@ -7,11 +7,16 @@ package com.projects.mocks.classes;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import com.github.mikephil.charting.charts.LineChart;
+import com.projects.mocks.fragments.DetailsFragment;
+import com.projects.mocks.fragments.MarketFragment;
 import com.projects.mocks.mocks.MainActivity;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.gson.Gson;
+import com.projects.mocks.mocks.R;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -29,62 +34,106 @@ import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
-
+//TODO: Create Custom constructor for each method, remove unused parts/clean up
 public class ThreadStock implements Runnable {
-    public String mth;
+    public  String mth;
     public  Calendar from;
     public  Calendar to;
     public  String sym;
-    private final Lock outMtx;
+    private Lock outMtx;
     private Context ctx;
+    public  ArrayAdapter<Stock> adapter;
+    public  ArrayList<Stock> output;
+    public  Stock selectedStock;
 
-   public ThreadStock(Context ct)
+
+    public ThreadStock(String method, Context ct, ThreadParams tp) //Multiple Stocks
     {
         outMtx = new ReentrantLock(true);
         ctx = ct;
+        adapter = tp.adapter;
+        output = tp.output;
+        mth = method;
     }
+
+    public ThreadStock(String symbol, String method) // Single Stock
+    {
+        sym = symbol;
+        mth = method;
+    }
+
+    public ThreadStock(String symbol, String method, Calendar fromDate, Calendar toDate, Context ct) // History of Stock
+    {
+        ctx = ct;
+        sym = symbol;
+        mth = method;
+        from = fromDate;
+        to = toDate;
+    }
+
 
 
     @Override
     public void run() {
         switch (mth) {
-            case "Update":
-                updateStocks();
+            case "UPDATE_MULTIPLE":
+                updateMultiple();
                 break;
-            case "Add":
-                sym = ((MainActivity)ctx).inputStock.getText().toString();
+            case "UPDATE_ONE":
+                updateOne();
+                break;
+            case "ADD":
+                sym =  "GOOGL";//((MainActivity)ctx).inputStock.getText().toString();
                 addStockToPortfolio(sym);
                 break;
-            case "History":
+            case "HISTORY":
                 getStockHistory(from, to, sym);
+                break;
+            case "DETAILS":
+                selectedStock = getStockDetails(sym);
                 break;
         }
     }
 
+    private Stock getStockDetails(String symbol)
+    {
+        Stock stock = new Stock(symbol);
+        try {
+            stock = YahooFinance.get(symbol);
+        }
+        catch (Exception e){
+            e.getMessage();
+        }
+        return stock;
+    }
+
+
+
     private void addStockToPortfolio(String ticker)
     {
-        final Stock stock;
         try {
+            final Stock stock;
             ticker = ticker.toUpperCase();
             stock = YahooFinance.get(ticker);
             addStock(stock);
             ((MainActivity)ctx).runOnUiThread(new Runnable(){
                 @Override
                 public void run() {
-                    ((MainActivity)ctx).adapter.add(stock);
-                    ((MainActivity)ctx).adapter.notifyDataSetChanged();
+                     adapter.add(stock);
+                     adapter.notifyDataSetChanged();
                 }
             });
         }
-        catch (Exception e){e.getMessage();}
-
+        catch (Exception e){
+            e.getMessage();
+        }
     }
 
     private void addStock(Stock s)
     {
         outMtx.lock();
         try {
-            ((MainActivity)ctx).output.add(s);
+            output.add(s);
         } catch (Exception e) {
             Log.d("Pushback Error:", e.getMessage());
         }
@@ -93,17 +142,17 @@ public class ThreadStock implements Runnable {
         }
     }
 
-    private void updateStocks()
+    private void updateMultiple()
     {
         while(!((MainActivity)ctx).mFinished) {
             while (!((MainActivity)ctx).mPaused) {
-                for (Stock s : ((MainActivity)ctx).output) {
+                for (Stock s : output) {
                     try {
                         s.getQuote(true).getPrice();
                         ((MainActivity)ctx).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ((MainActivity)ctx).adapter.notifyDataSetChanged();
+                                adapter.notifyDataSetChanged();
                             }
                         });
                     } catch (Exception e) {
@@ -116,6 +165,24 @@ public class ThreadStock implements Runnable {
                     e.getMessage();
                 }
             }
+        }
+    }
+
+    private void updateOne()
+    {
+        while(!((MainActivity)ctx).mFinished) {
+            while (!((MainActivity)ctx).mPaused) {
+                    try {
+                        selectedStock.getQuote(true).getPrice();
+                    } catch (Exception e) {
+                        e.getMessage();
+                    }
+                } // TODO Change to return updated stock value
+                try {
+                    Thread.sleep(5000);
+                } catch (Exception e) {
+                    e.getMessage();
+                }
         }
     }
 
@@ -166,12 +233,15 @@ public class ThreadStock implements Runnable {
                     dataSet.setColor(Color.rgb(0,125,80));
                     dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
                     LineData lineData = new LineData(dataSet);
-                    ((MainActivity)ctx).chart.setData(lineData);
-                    ((MainActivity)ctx).chart.invalidate(); // refresh
+                    LineChart chart = (LineChart)((MainActivity) ctx).findViewById(R.id.DetailsChart);
+                    chart.setData(lineData);
+                    chart.invalidate(); // refresh
                 }
             });
         }
-        catch (Exception e){e.getMessage();}
+        catch (Exception e){
+            e.getMessage();
+        }
     }
 
     private SeriesContainer[] getDailyData(String sym, int range)
@@ -222,3 +292,5 @@ public class ThreadStock implements Runnable {
         return resp;
     }
 }
+
+
