@@ -44,7 +44,7 @@
     <RadioGroup
         android:id="@+id/rdogrp"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
         android:layout_marginLeft="8dp"
@@ -53,16 +53,15 @@
         android:layout_alignParentEnd="true">
 
         <RadioButton
-            android:id="@+id/rtbnDay"
+            android:id="@+id/rbtnDay"
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_margin="0dp"
             android:button="@null"
-            android:checked="true"
             android:gravity="center"
             android:text="Day"
-            android:onClick="onChangePeriod" />
+            />
 
         <RadioButton
             android:id="@+id/rbtnWeek"
@@ -73,10 +72,10 @@
             android:button="@null"
             android:gravity="center"
             android:text="Week"
-            android:onClick="onChangePeriod" />
+            />
 
         <RadioButton
-            android:id="@+id/rtbnMonth"
+            android:id="@+id/rbtnMonth"
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="match_parent"
@@ -84,7 +83,7 @@
             android:button="@null"
             android:gravity="center"
             android:text="Month"
-            android:onClick="onChangePeriod" />
+            />
 
         <RadioButton
             android:id="@+id/rbtnYear"
@@ -95,19 +94,18 @@
             android:button="@null"
             android:gravity="center"
             android:text="Year"
-            android:onClick="onChangePeriod" />
+            />
 
         <RadioButton
-            android:id="@+id/rtbnFiveYear"
+            android:id="@+id/rbtnFiveYear"
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_margin="0dp"
             android:button="@null"
-            android:checked="true"
             android:gravity="center"
             android:text="5 Years"
-            android:onClick="onChangePeriod" />
+            />
     </RadioGroup>
 
     <TextView
@@ -140,7 +138,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_below="@+id/DetailsCompany"
-        android:layout_alignParentStart="true"></com.github.mikephil.charting.charts.LineChart>
+        android:layout_alignParentStart="true"/>
 
     <TextView
         android:id="@+id/DetailsHigh"
@@ -169,7 +167,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/DetailsInvest"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
 

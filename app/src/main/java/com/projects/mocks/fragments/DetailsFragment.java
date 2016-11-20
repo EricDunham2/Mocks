@@ -8,8 +8,14 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.YAxis;
 import com.projects.mocks.classes.ThreadParams;
 import com.projects.mocks.classes.ThreadStock;
@@ -32,12 +38,17 @@ public class DetailsFragment extends Fragment {
     private TextView company;
     private Thread updateThread;
     public String activeStockDetails;
+    RadioGroup rgroup;
+    Button invest;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+
+
         return inflater.inflate(R.layout.fragment_details, container, false);
     }
 
@@ -46,11 +57,13 @@ public class DetailsFragment extends Fragment {
     {
         //leave this on top unless you're absolutely sure something needs to go above this
         super.onViewCreated(view, savedInstanceState);
-        final FragmentDetailsBinding fragmentDetailsBinding = DataBindingUtil.setContentView(this.getActivity(),R.layout.fragment_details);
+        //final FragmentDetailsBinding fragmentDetailsBinding = DataBindingUtil.setContentView(this.getActivity(),R.layout.fragment_details);
         //used for back stacking and making sure the correct nav item is selected.
         chart = (LineChart)getView().findViewById(R.id.DetailsChart);
         setChartParams();
-        fragmentDetailsBinding.setSelectedStock(selectedStock);
+        chart.invalidate();
+        chart.notifyDataSetChanged();
+        //fragmentDetailsBinding.setSelectedStock(selectedStock);
         high = (TextView) getView().findViewById(R.id.DetailsHigh);
         low = (TextView) getView().findViewById(R.id.DetailsLow);
         close = (TextView) getView().findViewById(R.id.DetailsValue);
@@ -69,17 +82,49 @@ public class DetailsFragment extends Fragment {
             e.getMessage();
         }
 
+        rgroup = (RadioGroup)getView().findViewById(R.id.rdogrp);
+        rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId)
+            {
+                switch (checkedId)
+                {
+                    case R.id.rbtnDay:
+                        setDateline("DAY");
+                        break;
+                    case R.id.rbtnWeek:
+                        setDateline("WEEK");
+                        break;
+                    case R.id.rbtnMonth:
+                        setDateline("MONTH");
+                        break;
+                    case R.id.rbtnYear:
+                        setDateline("YEAR");
+                        break;
+                    case R.id.rbtnFiveYear:
+                        setDateline("5YEAR");
+                        break;
+                }
+
+                chart.invalidate();
+                chart.notifyDataSetChanged();
+            }
+        });
+
 
         ThreadStock st = new ThreadStock("UPDATE_ONE",activeStockDetails);
         updateThread = new Thread(st);
         updateThread.start();
 
         setDateline("WEEK");
+
     }
 
     private void setChartParams()
     {
         chart.setBackgroundColor(Color.argb(255,21,21,21));
+        chart.setDrawGridBackground(false);
         chart.getAxisRight().setDrawLabels(false);
         chart.getAxisLeft().setDrawLabels(false);
         chart.getXAxis().setDrawLabels(false);
@@ -91,23 +136,10 @@ public class DetailsFragment extends Fragment {
         yAxis = chart.getAxisRight();
         yAxis.setDrawGridLines(false);
         chart.getAxisLeft().setTextColor(Color.WHITE); // left y-axis
-    }
-
-    public void onChangePeriod(View view)
-    {
-        int id = view.getId();
-        switch (id) {
-            case R.id.rtbnDay:
-                setDateline("DAY");
-            case R.id.rbtnWeek:
-                setDateline("WEEK");
-            case R.id.rtbnMonth:
-                setDateline("MONTH");
-            case R.id.rbtnYear:
-                setDateline("YEAR");
-            case R.id.rtbnFiveYear:
-                setDateline("5YEAR");
-        }
+        chart.setContentDescription("");
+        Description d = new Description();
+        d.setText("");
+        chart.setDescription(d);
     }
 
     private void setDateline(String timespan)

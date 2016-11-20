@@ -3,6 +3,7 @@ package com.projects.mocks.mocks;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     public static NavigationView navigationView;
     //TODO: Make sure that when you move to a new fragment you stop certain fragments
     SharedPreferences settings;
+    SharedPreferences.Editor editor;
 
     //this might need to be static?
     public static DBAdapter db;
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity
     {
 
         settings = getSharedPreferences("settings", CONTEXT_RESTRICTED);
+        editor = settings.edit();
 
         if(settings.getBoolean("theme", false)){
             setTheme(R.style.AppThemeDark);
@@ -81,12 +84,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
 
-        //if(settings.getBoolean("firstRun", true))
-        //{
+        if(settings.getBoolean("firstRun", true))
+        {
             //do stuff if the application is running the first time, such as do the showy showy for the swipe activity, and get their name and poerty level and shit
-        //}
-        //else
-        //{
+            Intent i = new Intent(this, FirstTimeRunActivity.class);
+            startActivity(i);
+        }
+        else
+        {
             //do database maintenance if needed.
             db = new DBAdapter(this);
 
@@ -110,7 +115,7 @@ public class MainActivity extends AppCompatActivity
                 Log.d("IO Excepton", e.getMessage());
             }
             //end of database maintenance
-        //}
+        }
 
 
         fm = getFragmentManager();

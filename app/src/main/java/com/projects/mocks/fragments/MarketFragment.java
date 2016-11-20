@@ -80,7 +80,9 @@ public class MarketFragment extends Fragment
                 DetailsFragment detailsFragment = new DetailsFragment();
                 detailsFragment.setArguments(bundle);
                 ft.replace(currentFragment.getId(),detailsFragment,"F_DETAILS");
+                ft.addToBackStack(currentFragment.getTag());
                 ft.commit();
+
                 //Open Details Fragment
                 //Pass it Params of the symbol.
             }

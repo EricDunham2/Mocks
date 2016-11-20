@@ -38,36 +38,36 @@ public class OverviewFragment extends Fragment
         if(MainActivity.navigationView != null)
             MainActivity.navigationView.getMenu().findItem(R.id.nav_overview).setChecked(true);
 
-        //remember to open the connection. i lost way too much sleep forgetting to do this.
-        MainActivity.db.open();
-
-        //simple insert into the portfolio table.
-        MainActivity.db.insertPortfolio("TEST", 5);
-
-        ArrayList<String> slist = new ArrayList<>();
-        //get a cursor object from a select query.
-        Cursor cursor = MainActivity.db.getAllPortfolio();
-        //traverse the cursor.
-        if(cursor.moveToFirst())
-        {
-            //technically this should "move to first" in the if, but sometimes it doesnt. it doesnt hurt to do it again though.
-            cursor.moveToFirst();
-            //make sure the cursor isnt past the last one (kind of like how c++ does it's pointers)
-            while(!cursor.isAfterLast())
-            {
-                //add to the arraylist. The arraylist could be of anything obviously. if you needed to make a new object
-                //    you would just do something like:
-                //    "new MyObject(cursor.getString(cursor.getColumnIndex("Name")))"
-                slist.add(cursor.getString(cursor.getColumnIndex("QTY")));
-                //move to the next item
-                cursor.moveToNext();
-            }
-        }
-        //make sure to close the db, always do this. please dont forget.
-        MainActivity.db.close();
-
-        TextView tv = (TextView)getView().findViewById(R.id.testBox);
-        String st = slist.get(0);
-        tv.setText(st);
+//        //remember to open the connection. i lost way too much sleep forgetting to do this.
+//        MainActivity.db.open();
+//
+//        //simple insert into the portfolio table.
+//        MainActivity.db.insertPortfolio("TEST", 5);
+//
+//        ArrayList<String> slist = new ArrayList<>();
+//        //get a cursor object from a select query.
+//        Cursor cursor = MainActivity.db.getAllPortfolio();
+//        //traverse the cursor.
+//        if(cursor.moveToFirst())
+//        {
+//            //technically this should "move to first" in the if, but sometimes it doesnt. it doesnt hurt to do it again though.
+//            cursor.moveToFirst();
+//            //make sure the cursor isnt past the last one (kind of like how c++ does it's pointers)
+//            while(!cursor.isAfterLast())
+//            {
+//                //add to the arraylist. The arraylist could be of anything obviously. if you needed to make a new object
+//                //    you would just do something like:
+//                //    "new MyObject(cursor.getString(cursor.getColumnIndex("Name")))"
+//                slist.add(cursor.getString(cursor.getColumnIndex("QTY")));
+//                //move to the next item
+//                cursor.moveToNext();
+//            }
+//        }
+//        //make sure to close the db, always do this. please dont forget.
+//        MainActivity.db.close();
+//
+//        TextView tv = (TextView)getView().findViewById(R.id.testBox);
+//        String st = slist.get(0);
+//        tv.setText(st);
     }
 }
