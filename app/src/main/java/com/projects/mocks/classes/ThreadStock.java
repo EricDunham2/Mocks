@@ -5,6 +5,7 @@ package com.projects.mocks.classes;
  */
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -17,6 +18,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.gson.Gson;
 import com.projects.mocks.mocks.R;
+import com.projects.mocks.mocks.databinding.FragmentDetailsBinding;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -45,6 +47,7 @@ public class ThreadStock implements Runnable {
     public  ArrayAdapter<Stock> adapter;
     public  ArrayList<Stock> output;
     public  Stock selectedStock;
+    public DetailsFragment df;
 
 
     public ThreadStock(String method, Context ct, ThreadParams tp) //Multiple Stocks
@@ -61,6 +64,14 @@ public class ThreadStock implements Runnable {
         sym = symbol;
         mth = method;
     }
+
+    public ThreadStock(String symbol, String method, Context _ctx) // Single Stock
+    {
+        ctx = _ctx;
+        sym = symbol;
+        mth = method;
+    }
+
 
     public ThreadStock(String symbol, String method, Calendar fromDate, Calendar toDate, Context ct) // History of Stock
     {
@@ -170,19 +181,34 @@ public class ThreadStock implements Runnable {
 
     private void updateOne()
     {
-        while(!((MainActivity)ctx).mFinished) {
-            while (!((MainActivity)ctx).mPaused) {
-                    try {
-                        selectedStock.getQuote(true).getPrice();
-                    } catch (Exception e) {
-                        e.getMessage();
+        while(true)
+        {
+            try
+            {
+                selectedStock = getStockDetails(sym);
+                ((MainActivity) ctx).runOnUiThread(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        FragmentDetailsBinding fragmentDetailsBinding = DataBindingUtil.setContentView(((MainActivity) ctx), df.getId());
+                        //final FragmentDetailsBinding fragmentDetailsBinding = FragmentDetailsBinding.inflate(((MainActivity)ctx).getLayoutInflater());
+                        fragmentDetailsBinding.setSelectedStock(selectedStock);
                     }
-                } // TODO Change to return updated stock value
-                try {
-                    Thread.sleep(5000);
-                } catch (Exception e) {
-                    e.getMessage();
-                }
+                });
+            } catch (Exception e)
+            {
+                e.getMessage();
+            }
+
+            // TODO Change to return updated stock value
+            try
+            {
+                Thread.sleep(5000);
+            } catch (Exception e)
+            {
+                e.getMessage();
+            }
         }
     }
 

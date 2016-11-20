@@ -57,13 +57,11 @@ public class DetailsFragment extends Fragment {
     {
         //leave this on top unless you're absolutely sure something needs to go above this
         super.onViewCreated(view, savedInstanceState);
-        //final FragmentDetailsBinding fragmentDetailsBinding = DataBindingUtil.setContentView(this.getActivity(),R.layout.fragment_details);
         //used for back stacking and making sure the correct nav item is selected.
         chart = (LineChart)getView().findViewById(R.id.DetailsChart);
         setChartParams();
         chart.invalidate();
         chart.notifyDataSetChanged();
-        //fragmentDetailsBinding.setSelectedStock(selectedStock);
         high = (TextView) getView().findViewById(R.id.DetailsHigh);
         low = (TextView) getView().findViewById(R.id.DetailsLow);
         close = (TextView) getView().findViewById(R.id.DetailsValue);
@@ -72,11 +70,10 @@ public class DetailsFragment extends Fragment {
         activeStockDetails = getArguments().get("selectedStock").toString();
 
         try {
-            ThreadStock detailsThreadStock = new ThreadStock(activeStockDetails,"DETAILS"); // Gets the
+            ThreadStock detailsThreadStock = new ThreadStock(activeStockDetails,"UPDATE_ONE",getContext());
+            detailsThreadStock.df = this;
             Thread detailsThread = new Thread(detailsThreadStock);
             detailsThread.start();
-            detailsThread.join();
-            selectedStock = detailsThreadStock.selectedStock;
         }catch (Exception e)
         {
             e.getMessage();
