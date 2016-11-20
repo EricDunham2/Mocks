@@ -9,6 +9,8 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
 import com.github.mikephil.charting.charts.LineChart;
 import com.projects.mocks.fragments.DetailsFragment;
 import com.projects.mocks.fragments.MarketFragment;
@@ -46,43 +48,23 @@ public class ThreadStock implements Runnable {
     private Context ctx;
     public  ArrayAdapter<Stock> adapter;
     public  ArrayList<Stock> output;
-    public  Stock selectedStock;
     public DetailsFragment df;
+    private  Stock selectedStock;
 
 
-    public ThreadStock(String method, Context ct, ThreadParams tp) //Multiple Stocks
+
+    public ThreadStock(ThreadParams tp) //Multiple Stocks
     {
         outMtx = new ReentrantLock(true);
-        ctx = ct;
+        ctx = tp.ctx;
         adapter = tp.adapter;
         output = tp.output;
-        mth = method;
+        mth = tp.mth;
+        from = tp.from;
+        to = tp.to;
+        sym = tp.sym;
+        df = tp.df;
     }
-
-    public ThreadStock(String symbol, String method) // Single Stock
-    {
-        sym = symbol;
-        mth = method;
-    }
-
-    public ThreadStock(String symbol, String method, Context _ctx) // Single Stock
-    {
-        ctx = _ctx;
-        sym = symbol;
-        mth = method;
-    }
-
-
-    public ThreadStock(String symbol, String method, Calendar fromDate, Calendar toDate, Context ct) // History of Stock
-    {
-        ctx = ct;
-        sym = symbol;
-        mth = method;
-        from = fromDate;
-        to = toDate;
-    }
-
-
 
     @Override
     public void run() {
@@ -99,9 +81,6 @@ public class ThreadStock implements Runnable {
                 break;
             case "HISTORY":
                 getStockHistory(from, to, sym);
-                break;
-            case "DETAILS":
-                selectedStock = getStockDetails(sym);
                 break;
         }
     }
@@ -181,33 +160,38 @@ public class ThreadStock implements Runnable {
 
     private void updateOne()
     {
-        while(true)
-        {
-            try
-            {
-                selectedStock = getStockDetails(sym);
-                ((MainActivity) ctx).runOnUiThread(new Runnable()
+        while(df.mFinished) {
+            while (df.mPaused) {
                 {
-                    @Override
-                    public void run()
-                    {
-                        FragmentDetailsBinding fragmentDetailsBinding = DataBindingUtil.setContentView(((MainActivity) ctx), df.getId());
-                        //final FragmentDetailsBinding fragmentDetailsBinding = FragmentDetailsBinding.inflate(((MainActivity)ctx).getLayoutInflater());
-                        fragmentDetailsBinding.setSelectedStock(selectedStock);
+                    try {
+                        selectedStock = getStockDetails(sym);
+                        ((MainActivity) ctx).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                TextView high = (TextView) df.getView().findViewById(R.id.DetailsHigh);
+                                TextView value = (TextView) df.getView().findViewById(R.id.DetailsValue);
+                                TextView low = (TextView) df.getView().findViewById(R.id.DetailsLow);
+                                TextView percent = (TextView) df.getView().findViewById(R.id.DetailsPercent);
+                                TextView symbol = (TextView) df.getView().findViewById(R.id.Symbol);
+                                TextView company = (TextView) df.getView().findViewById(R.id.DetailsCompany);
+                                high.setText(selectedStock.getQuote().getDayHigh().toString());
+                                value.setText(selectedStock.getQuote().getPrice().toString());
+                                low.setText(selectedStock.getQuote().getDayLow().toString());
+                                percent.setText(selectedStock.getQuote().getChangeFromAvg50InPercent().toString());
+                                symbol.setText(selectedStock.getSymbol().toString());
+                                company.setText(selectedStock.getName().toString());
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.getMessage();
                     }
-                });
-            } catch (Exception e)
-            {
-                e.getMessage();
-            }
 
-            // TODO Change to return updated stock value
-            try
-            {
-                Thread.sleep(5000);
-            } catch (Exception e)
-            {
-                e.getMessage();
+                    try {
+                        Thread.sleep(5000);
+                    } catch (Exception e) {
+                        e.getMessage();
+                    }
+                }
             }
         }
     }
@@ -216,7 +200,7 @@ public class ThreadStock implements Runnable {
         return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
     }
 
-    private void getStockHistory(Calendar from, Calendar to, String sym)
+    private void getStockHistory(Calendar from, Calendar to, String sym) //Only used in details view
     {
         try {
 
@@ -270,7 +254,7 @@ public class ThreadStock implements Runnable {
         }
     }
 
-    private SeriesContainer[] getDailyData(String sym, int range)
+    private SeriesContainer[] getDailyData(String sym, int range) //Only used in details View
     {
         SeriesContainer[] rs;
         try

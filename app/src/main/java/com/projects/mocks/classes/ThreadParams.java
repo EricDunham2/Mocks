@@ -1,11 +1,10 @@
 package com.projects.mocks.classes;
 
+import android.content.Context;
 import android.widget.ArrayAdapter;
-
-import com.github.mikephil.charting.charts.LineChart;
-
+import com.projects.mocks.fragments.DetailsFragment;
 import java.util.ArrayList;
-
+import java.util.Calendar;
 import yahoofinance.Stock;
 
 /**
@@ -14,12 +13,12 @@ import yahoofinance.Stock;
  //TODO Find a better way to pass by ref
 public class ThreadParams
 {
-    public ArrayAdapter<Stock> adapter;
-    public ArrayList<Stock> output;
-
-    public ThreadParams( ArrayList<Stock> o, ArrayAdapter<Stock> a)
-    {
-        output = o;
-        adapter = a;
-    }
+    public  String mth;
+    public  Calendar from;
+    public  Calendar to;
+    public  String sym;
+    public Context ctx;
+    public  ArrayAdapter<Stock> adapter;
+    public  ArrayList<Stock> output;
+    public DetailsFragment df;
 }

@@ -49,19 +49,22 @@ public class MarketFragment extends Fragment
             MainActivity.navigationView.getMenu().findItem(R.id.nav_market).setChecked(true);
 
         output = new ArrayList<>();
-       // chart = (LineChart)getView().findViewById(R.id.DetailsChart);
-        //searchFor = (EditText) getView().findViewById(R.id.searchListView);
         stocklv = (ListView) getView().findViewById(R.id.AllStocks);
         setStockListView();
         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
         stocklv.setAdapter(adapter);
-        ThreadParams tp = new ThreadParams(output,adapter);
-        ThreadStock threadStock = new ThreadStock("ADD",getContext(),tp);
-        threadStock.sym = "AAPL"; // TODO Replace with for loop to go through all stocks
-        Thread thread = new Thread(threadStock);
-        thread.start();
+//        ThreadParams ad = new ThreadParams(output,adapter);
+//        ThreadStock threadStock = new ThreadStock("ADD",getContext(),tp);
+//        threadStock.sym = "AAPL"; // TODO Replace with for loop to go through all stocks
+//        Thread thread = new Thread(threadStock);
+//        thread.start();
 
-        ThreadStock st = new ThreadStock("UPDATE_MULTIPLE",getContext(),tp);
+        ThreadParams updateParams = new ThreadParams();
+            updateParams.adapter = adapter;
+            updateParams.output = output;
+            updateParams.ctx = getContext();
+            updateParams.mth = "UPDATE_MULTIPLE";
+        ThreadStock st = new ThreadStock(updateParams);
         updateThread = new Thread(st);
         updateThread.start();
     }
@@ -82,7 +85,6 @@ public class MarketFragment extends Fragment
                 ft.replace(currentFragment.getId(),detailsFragment,"F_DETAILS");
                 ft.addToBackStack(currentFragment.getTag());
                 ft.commit();
-
                 //Open Details Fragment
                 //Pass it Params of the symbol.
             }

@@ -30,25 +30,14 @@ import yahoofinance.YahooFinance;
  */
 public class DetailsFragment extends Fragment {
     private LineChart chart;
-    public Stock selectedStock;
-    private TextView high;
-    private TextView close;
-    private TextView low;
-    private TextView sym;
-    private TextView company;
-    private Thread updateThread;
     public String activeStockDetails;
-    RadioGroup rgroup;
-    Button invest;
-
+    private RadioGroup rgroup;
+    public boolean mPaused;
+    public boolean mFinished;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-
-
-
         return inflater.inflate(R.layout.fragment_details, container, false);
     }
 
@@ -62,15 +51,15 @@ public class DetailsFragment extends Fragment {
         setChartParams();
         chart.invalidate();
         chart.notifyDataSetChanged();
-        high = (TextView) getView().findViewById(R.id.DetailsHigh);
-        low = (TextView) getView().findViewById(R.id.DetailsLow);
-        close = (TextView) getView().findViewById(R.id.DetailsValue);
-        sym = (TextView) getView().findViewById(R.id.Symbol);
-        company = (TextView) getView().findViewById(R.id.DetailsCompany);
         activeStockDetails = getArguments().get("selectedStock").toString();
 
         try {
-            ThreadStock detailsThreadStock = new ThreadStock(activeStockDetails,"UPDATE_ONE",getContext());
+            ThreadParams detailParams = new ThreadParams();
+            detailParams.mth = "UPDATE_ONE";
+            detailParams.ctx = getContext();
+            detailParams.sym = activeStockDetails;
+
+            ThreadStock detailsThreadStock = new ThreadStock(detailParams);
             detailsThreadStock.df = this;
             Thread detailsThread = new Thread(detailsThreadStock);
             detailsThread.start();
@@ -108,19 +97,11 @@ public class DetailsFragment extends Fragment {
                 chart.notifyDataSetChanged();
             }
         });
-
-
-        ThreadStock st = new ThreadStock("UPDATE_ONE",activeStockDetails);
-        updateThread = new Thread(st);
-        updateThread.start();
-
         setDateline("WEEK");
-
     }
 
     private void setChartParams()
     {
-        chart.setBackgroundColor(Color.argb(255,21,21,21));
         chart.setDrawGridBackground(false);
         chart.getAxisRight().setDrawLabels(false);
         chart.getAxisLeft().setDrawLabels(false);
@@ -160,10 +141,16 @@ public class DetailsFragment extends Fragment {
                 past.add(Calendar.YEAR, -5);
                 break;
         }
-        ThreadStock st = new ThreadStock(activeStockDetails,"HISTORY", past, tdy, getView().getContext());
+        ThreadParams historyParams = new ThreadParams();
+            historyParams.ctx = getContext();
+            historyParams.to = tdy;
+            historyParams.from = past;
+            historyParams.mth = "HISTORY";
+            historyParams.sym = activeStockDetails;
 
-        Thread t = new Thread(st);
-        t.start();
+        ThreadStock historyThreadStock = new ThreadStock(historyParams);
+        Thread historyThread = new Thread(historyThreadStock);
+        historyThread.start();
     }
 
 
