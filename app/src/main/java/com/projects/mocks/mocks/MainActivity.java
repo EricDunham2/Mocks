@@ -108,11 +108,11 @@ public class MainActivity extends AppCompatActivity
             }
             catch (FileNotFoundException e)
             {
-                Log.d("FILE NOT FOUNF", e.getMessage());
+                Log.d("FILE NOT FOUND", e.getMessage());
             }
             catch (IOException e)
             {
-                Log.d("IO Excepton", e.getMessage());
+                Log.d("IO Exception", e.getMessage());
             }
             //end of database maintenance
         }

@@ -4,6 +4,27 @@
              android:layout_height="match_parent"
              tools:context="com.projects.mocks.mocks.FinalIntroFragment">
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_marginBottom="44dp"
+        android:id="@+id/etName"
+        android:hint="Your Name"
+        android:textAlignment="center"
+        android:layout_above="@+id/button"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
+        android:id="@+id/tvErrorFinalIntro"
+        android:textColor="@color/colorBad"
+        android:layout_above="@+id/button"
+        android:layout_centerHorizontal="true"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,6 +37,7 @@
         style="@style/FillButton"
         android:onClick="onClickGo"
         android:layout_marginBottom="49dp"
+        android:id="@+id/button"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"/>
 

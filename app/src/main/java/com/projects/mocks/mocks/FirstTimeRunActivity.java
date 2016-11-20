@@ -12,8 +12,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
+import com.projects.mocks.classes.ThreadLeaderboard;
 import com.projects.mocks.fragments.ScreenSlidePageFragment;
+
+import org.w3c.dom.Text;
 
 public class FirstTimeRunActivity extends FragmentActivity
 {
@@ -55,14 +59,47 @@ public class FirstTimeRunActivity extends FragmentActivity
     public void onClickGo(View view)
     {
         //will have to do stuff like name checking and stuff here before we set the "firstRun" preference to false;
+        TextView tv = (TextView)findViewById(R.id.etName);
+        TextView tvError = (TextView)findViewById(R.id.tvErrorFinalIntro);
 
-        settings = getSharedPreferences("settings", CONTEXT_RESTRICTED);
-        editor = settings.edit();
-        editor.putBoolean("firstRun", false);
-        editor.commit();
+        if(tv != null)
+        {
+            if(tv.getText().toString().equals(""))
+            {
+                tvError.setText("Please enter a name");
+            }
+            else
+            {
+                ThreadLeaderboard tl = new ThreadLeaderboard();
+                tl.username =  tv.getText().toString(); //newUser.getText().toString();
+                tl.method = "ADD";
+                Thread t = new Thread(tl);
+                t.start();
+                try
+                {
+                    t.join();
+                } catch (InterruptedException e)
+                {
+                    e.printStackTrace();
+                }
+                int response =  tl.responseCode;
 
-        Intent i = new Intent(this, MainActivity.class);
-        startActivity(i);
+                if(response == 0)
+                    tvError.setText("Sorry, that user already exists.");
+                else if(response == 2)
+                    tvError.setText("Something went wrong. Please try again.");
+                else if(response == 1)
+                {
+                    settings = getSharedPreferences("settings", CONTEXT_RESTRICTED);
+                    editor = settings.edit();
+                    editor.putBoolean("firstRun", false);
+                    editor.commit();
+
+                    Intent i = new Intent(this, MainActivity.class);
+                    startActivity(i);
+                }
+            }
+        }
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter

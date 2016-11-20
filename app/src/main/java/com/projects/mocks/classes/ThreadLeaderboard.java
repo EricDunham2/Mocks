@@ -18,7 +18,7 @@ public class ThreadLeaderboard implements Runnable {
     public String method = "ADD";
     public String username;
     public BigDecimal roi ;
-    private int responseCode = 0;
+    public int responseCode = 0;
     public User[] topPlayers = new User[11];
     private Gson gson = new Gson();
 
