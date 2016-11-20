@@ -53,7 +53,11 @@ public class MarketFragment extends Fragment
         setStockListView();
         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
         stocklv.setAdapter(adapter);
-//        ThreadParams ad = new ThreadParams(output,adapter);
+      ThreadParams addParams = new ThreadParams();
+                    addParams.output = output;
+                    addParams.adapter = adapter;
+                    addParams.mth = "ADD";
+                    addParams.sym = "GOOGL";
 //        ThreadStock threadStock = new ThreadStock("ADD",getContext(),tp);
 //        threadStock.sym = "AAPL"; // TODO Replace with for loop to go through all stocks
 //        Thread thread = new Thread(threadStock);

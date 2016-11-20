@@ -47,6 +47,7 @@ public class ThreadStock implements Runnable {
     private Lock outMtx;
     private Context ctx;
     public  ArrayAdapter<Stock> adapter;
+    public ArrayList<String> stocksToAdd;
     public  ArrayList<Stock> output;
     public DetailsFragment df;
     private  Stock selectedStock;
@@ -76,7 +77,6 @@ public class ThreadStock implements Runnable {
                 updateOne();
                 break;
             case "ADD":
-                sym =  "GOOGL";//((MainActivity)ctx).inputStock.getText().toString();
                 addStockToPortfolio(sym);
                 break;
             case "HISTORY":
@@ -98,6 +98,27 @@ public class ThreadStock implements Runnable {
     }
 
 
+    private void addMultipleStocksToListView()
+    {
+        for (String sym: stocksToAdd) {
+            try {
+                final Stock stock;
+                sym = sym.toUpperCase();
+                stock = YahooFinance.get(sym);
+                addStockToArrayList(stock);
+                ((MainActivity)ctx).runOnUiThread(new Runnable(){
+                    @Override
+                    public void run() {
+                        adapter.add(stock);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+            }
+            catch (Exception e){
+                e.getMessage();
+            }
+        }
+    }
 
     private void addStockToPortfolio(String ticker)
     {
@@ -105,7 +126,7 @@ public class ThreadStock implements Runnable {
             final Stock stock;
             ticker = ticker.toUpperCase();
             stock = YahooFinance.get(ticker);
-            addStock(stock);
+            addStockToArrayList(stock);
             ((MainActivity)ctx).runOnUiThread(new Runnable(){
                 @Override
                 public void run() {
@@ -119,7 +140,7 @@ public class ThreadStock implements Runnable {
         }
     }
 
-    private void addStock(Stock s)
+    private void addStockToArrayList(Stock s)
     {
         outMtx.lock();
         try {
