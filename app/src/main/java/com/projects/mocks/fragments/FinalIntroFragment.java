@@ -1,4 +1,4 @@
-package com.projects.mocks.mocks;
+package com.projects.mocks.fragments;
 
 
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.projects.mocks.mocks.R;
 
 
 /**

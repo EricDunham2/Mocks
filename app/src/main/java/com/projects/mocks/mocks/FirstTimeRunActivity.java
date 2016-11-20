@@ -9,15 +9,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import com.projects.mocks.classes.ThreadLeaderboard;
+import com.projects.mocks.fragments.FinalIntroFragment;
 import com.projects.mocks.fragments.ScreenSlidePageFragment;
-
-import org.w3c.dom.Text;
 
 public class FirstTimeRunActivity extends FragmentActivity
 {
@@ -70,26 +68,26 @@ public class FirstTimeRunActivity extends FragmentActivity
             }
             else
             {
-                ThreadLeaderboard tl = new ThreadLeaderboard();
-                tl.username =  tv.getText().toString(); //newUser.getText().toString();
-                tl.method = "ADD";
-                Thread t = new Thread(tl);
-                t.start();
-                try
-                {
-                    t.join();
-                } catch (InterruptedException e)
-                {
-                    e.printStackTrace();
-                }
-                int response =  tl.responseCode;
-
-                if(response == 0)
-                    tvError.setText("Sorry, that user already exists.");
-                else if(response == 2)
-                    tvError.setText("Something went wrong. Please try again.");
-                else if(response == 1)
-                {
+//                ThreadLeaderboard tl = new ThreadLeaderboard();
+//                tl.username =  tv.getText().toString(); //newUser.getText().toString();
+//                tl.method = "ADD";
+//                Thread t = new Thread(tl);
+//                t.start();
+//                try
+//                {
+//                    t.join();
+//                } catch (InterruptedException e)
+//                {
+//                    e.printStackTrace();
+//                }
+//                int response =  tl.responseCode;
+//
+//                if(response == 0)
+//                    tvError.setText("Sorry, that user already exists.");
+//                else if(response == 2)
+//                    tvError.setText("Something went wrong. Please try again.");
+//                else if(response == 1)
+//                {
                     settings = getSharedPreferences("settings", CONTEXT_RESTRICTED);
                     editor = settings.edit();
                     editor.putBoolean("firstRun", false);
@@ -97,7 +95,7 @@ public class FirstTimeRunActivity extends FragmentActivity
 
                     Intent i = new Intent(this, MainActivity.class);
                     startActivity(i);
-                }
+//                }
             }
         }
     }

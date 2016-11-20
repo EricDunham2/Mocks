@@ -108,7 +108,6 @@ public class DBAdapter
     //retrieve functions for the tables
 
     //db.query(Table, column(s), whereClause, whereArgs, groupBy, having, orderBy, limit);
-
     public Cursor getAllPortfolio()
     {
         return db.query(PORTFOLIO_TABLE, new String[] {PORTFOLIO_ID, PORTFOLIO_QTY, PORTFOLIO_SYMBOL}, null, null, null, null, null);
