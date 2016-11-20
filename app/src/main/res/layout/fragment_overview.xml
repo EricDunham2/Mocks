@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Overview Fragment"
-        android:textColor="?attr/txtColor"/>
+        android:textColor="?attr/txtColor"
+        android:id="@+id/testBox"/>
 
 </FrameLayout>

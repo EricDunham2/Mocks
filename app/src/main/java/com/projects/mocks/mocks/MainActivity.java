@@ -12,6 +12,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.ContextThemeWrapper;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -32,6 +33,12 @@ import com.projects.mocks.fragments.OverviewFragment;
 import com.projects.mocks.fragments.SettingsFragment;
 import com.projects.mocks.fragments.ShopFragment;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 
 public class MainActivity extends AppCompatActivity
@@ -55,22 +62,56 @@ public class MainActivity extends AppCompatActivity
     //TODO: Make sure that when you move to a new fragment you stop certain fragments
     SharedPreferences settings;
 
+    //this might need to be static?
+    public static DBAdapter db;
+
     protected void onCreate(Bundle savedInstanceState)
     {
 
         settings = getSharedPreferences("settings", CONTEXT_RESTRICTED);
 
         if(settings.getBoolean("theme", false)){
-            //Toast.makeText(this, "is dark theme", Toast.LENGTH_LONG).show();
             setTheme(R.style.AppThemeDark);
         }
         else{
-            //Toast.makeText(this, "is light theme", Toast.LENGTH_LONG).show();
             setTheme(R.style.AppTheme);
         }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        //if(settings.getBoolean("firstRun", true))
+        //{
+            //do stuff if the application is running the first time, such as do the showy showy for the swipe activity, and get their name and poerty level and shit
+        //}
+        //else
+        //{
+            //do database maintenance if needed.
+            db = new DBAdapter(this);
+
+            try{
+                String destPath = "/data/data/" + getPackageName() + "/databases";
+                File f = new File(destPath);
+                if(!f.exists() || f.listFiles().length < 1)
+                {
+                    f.mkdir();
+                    f.createNewFile();
+
+                    CopyDB(getBaseContext().getAssets().open("mocksdb"), new FileOutputStream(destPath + "/mocksdb"));
+                }
+            }
+            catch (FileNotFoundException e)
+            {
+                Log.d("FILE NOT FOUNF", e.getMessage());
+            }
+            catch (IOException e)
+            {
+                Log.d("IO Excepton", e.getMessage());
+            }
+            //end of database maintenance
+        //}
+
 
         fm = getFragmentManager();
 
@@ -110,6 +151,19 @@ public class MainActivity extends AppCompatActivity
         //getWindow().setNavigationBarColor(getResources().getColor(R.color.colorAccent));
 
         main = this;
+    }
+
+    public void CopyDB(InputStream inputStream, OutputStream outputStream) throws IOException
+    {
+        // COpy one byte at a time
+        byte[] buffer = new byte[1024];
+        int length;
+        while((length = inputStream.read(buffer)) > 0)
+        {
+            outputStream.write(buffer,0,length);
+        }
+        inputStream.close();  // close streams
+        outputStream.close();
     }
 
     //This shouldn't have to be changed. Back button is being handled correctly.
