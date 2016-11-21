@@ -51,6 +51,8 @@ public class DetailsFragment extends Fragment {
         setChartParams();
         chart.invalidate();
         chart.notifyDataSetChanged();
+        mPaused = false;
+        mFinished = false;
         activeStockDetails = getArguments().get("selectedStock").toString();
 
         try {
@@ -151,6 +153,24 @@ public class DetailsFragment extends Fragment {
         ThreadStock historyThreadStock = new ThreadStock(historyParams);
         Thread historyThread = new Thread(historyThreadStock);
         historyThread.start();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPaused = false;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPaused = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mFinished = true;
     }
 
 

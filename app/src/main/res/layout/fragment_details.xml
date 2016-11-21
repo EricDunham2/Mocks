@@ -23,7 +23,8 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="13dp"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:text="N/A" />
 
     <TextView
         android:id="@+id/DetailsCompany"
@@ -37,7 +38,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:text="N/A" />
 
     <RadioGroup
         android:id="@+id/rdogrp"
@@ -113,7 +115,8 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_below="@+id/DetailsHigh"
-        android:layout_marginTop="11dp" />
+        android:layout_marginTop="11dp"
+        android:text="N/A" />
 
     <TextView
         android:id="@+id/DetailsValue"
@@ -125,7 +128,8 @@
         android:textAlignment="center"
         android:textSize="25dp"
         android:layout_alignTop="@+id/DetailsPercent"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:text="N/A" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:layout_width="match_parent"
@@ -143,7 +147,7 @@
         android:layout_height="25dp"
         android:layout_below="@+id/rdogrp"
         android:layout_alignStart="@+id/DetailsLow"
-        />
+        android:text="N/A" />
 
     <TextView
         android:id="@+id/DetailsPercent"
@@ -153,7 +157,8 @@
         android:textSize="30dp"
         android:layout_alignTop="@+id/DetailsHigh"
         android:layout_toStartOf="@+id/DetailsValue"
-        android:layout_alignBottom="@+id/DetailsLow" />
+        android:layout_alignBottom="@+id/DetailsLow"
+        android:text="N/A" />
 
 </RelativeLayout>
 

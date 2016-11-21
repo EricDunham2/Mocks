@@ -1,51 +1,58 @@
-package com.projects.mocks.mocks;
+        package com.projects.mocks.mocks;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.view.ContextThemeWrapper;
-import android.util.Log;
-import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.Toast;
-import com.projects.mocks.classes.*;
-import com.projects.mocks.fragments.InventoryFragment;
-import com.projects.mocks.fragments.LeaderboardFragment;
-import com.projects.mocks.fragments.MarketFragment;
-import com.projects.mocks.fragments.OverviewFragment;
-import com.projects.mocks.fragments.SettingsFragment;
-import com.projects.mocks.fragments.ShopFragment;
+        import android.app.Activity;
+        import android.app.Dialog;
+        import android.app.ProgressDialog;
+        import android.content.DialogInterface;
+        import android.content.Intent;
+        import android.content.SharedPreferences;
+        import android.graphics.Color;
+        import android.os.Bundle;
+        import android.os.SystemClock;
+        import android.support.design.widget.FloatingActionButton;
+        import android.support.design.widget.Snackbar;
+        import android.support.v4.app.FragmentManager;
+        import android.support.v7.app.AlertDialog;
+        import android.support.v7.view.ContextThemeWrapper;
+        import android.util.Log;
+        import android.view.View;
+        import android.support.design.widget.NavigationView;
+        import android.support.v4.view.GravityCompat;
+        import android.support.v4.widget.DrawerLayout;
+        import android.support.v7.app.ActionBarDrawerToggle;
+        import android.support.v7.app.AppCompatActivity;
+        import android.support.v7.widget.Toolbar;
+        import android.view.Menu;
+        import android.view.MenuItem;
+        import android.widget.ArrayAdapter;
+        import android.widget.Button;
+        import android.widget.CompoundButton;
+        import android.widget.EditText;
+        import android.widget.NumberPicker;
+        import android.widget.Toast;
+        import com.projects.mocks.classes.*;
+        import com.projects.mocks.fragments.InventoryFragment;
+        import com.projects.mocks.fragments.LeaderboardFragment;
+        import com.projects.mocks.fragments.MarketFragment;
+        import com.projects.mocks.fragments.OverviewFragment;
+        import com.projects.mocks.fragments.SettingsFragment;
+        import com.projects.mocks.fragments.ShopFragment;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.math.BigDecimal;
+        import java.io.BufferedReader;
+        import java.io.File;
+        import java.io.FileNotFoundException;
+        import java.io.FileOutputStream;
+        import java.io.FileReader;
+        import java.io.IOException;
+        import java.io.InputStream;
+        import java.io.InputStreamReader;
+        import java.io.OutputStream;
+        import java.math.BigDecimal;
+        import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity
+        import yahoofinance.Stock;
+
+        public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
 
@@ -57,6 +64,9 @@ public class MainActivity extends AppCompatActivity
     private SettingsFragment settingsFrag;
     private FloatingActionButton fab;
     private ProgressDialog progress;
+    static public ArrayList<Stock> output;
+    static public ArrayAdapter<Stock> adapter;
+    static public int databaseIndex;
     public static Activity main;
     public boolean mPaused = false;
     public User usr = new User("Its 3am so please work"); //TODO: Remove after testing
@@ -85,6 +95,9 @@ public class MainActivity extends AppCompatActivity
 
         settings = getSharedPreferences("settings", CONTEXT_RESTRICTED);
         editor = settings.edit();
+        output = new ArrayList<>();
+        databaseIndex = 1;
+        adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1);
 
         if(settings.getBoolean("theme", false)){
             setTheme(R.style.AppThemeDark);
@@ -166,10 +179,16 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                android.app.FragmentManager fm = getFragmentManager();
+                android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
+                if(currentFragment.getTag().equals("F_DETAILS"))
+                {
+                    showBuyDialog();
+                }
+
             }
         });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -195,7 +214,7 @@ public class MainActivity extends AppCompatActivity
         main = this;
     }
 
-        //no longer needed, but kept here just in case.
+    //no longer needed, but kept here just in case.
 //    public void doAllInserts(){
 //        String line = "";
 //        try (BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("tickers.csv")))) {
@@ -208,6 +227,38 @@ public class MainActivity extends AppCompatActivity
 //            e.printStackTrace();
 //        }
 //    }
+
+
+
+    public void showBuyDialog()
+    {
+        final Dialog d = new Dialog(MainActivity.this);
+        d.setTitle("Number of stocks to purchase");
+        d.setContentView(R.layout.buy_dialog);
+        Button b1 = (Button) d.findViewById(R.id.button1);
+        Button b2 = (Button) d.findViewById(R.id.button2);
+        final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
+        np.setMaxValue(100);
+        np.setMinValue(1);
+        np.setWrapSelectorWheel(false);
+        b1.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                ///Buy shit
+                d.dismiss();
+            }
+        });
+        b2.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                d.dismiss();
+            }
+        });
+        d.show();
+    }
+
 
     public void CopyDB(InputStream inputStream, OutputStream outputStream) throws IOException
     {

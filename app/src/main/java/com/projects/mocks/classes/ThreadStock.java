@@ -44,19 +44,19 @@ public class ThreadStock implements Runnable {
     public  Calendar from;
     public  Calendar to;
     public  String sym;
-    private Lock outMtx;
     private Context ctx;
     public  ArrayAdapter<Stock> adapter;
     public ArrayList<String> stocksToAdd;
     public  ArrayList<Stock> output;
     public DetailsFragment df;
-    private  Stock selectedStock;
+    private Stock selectedStock;
+    public int updateRangeTop;
+    public int updateRangeLow;
 
 
 
     public ThreadStock(ThreadParams tp) //Multiple Stocks
     {
-        outMtx = new ReentrantLock(true);
         ctx = tp.ctx;
         adapter = tp.adapter;
         output = tp.output;
@@ -103,22 +103,25 @@ public class ThreadStock implements Runnable {
 
     private void addMultipleStocksToListView()
     {
-        for (String sym: stocksToAdd) {
-            try {
-                final Stock stock;
-                sym = sym.toUpperCase();
-                stock = YahooFinance.get(sym);
-                addStockToArrayList(stock);
-                ((MainActivity)ctx).runOnUiThread(new Runnable(){
-                    @Override
-                    public void run() {
-                        adapter.add(stock);
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-            }
-            catch (Exception e){
-                e.getMessage();
+        synchronized (stocksToAdd) {
+            for (String sym : stocksToAdd) {
+                try {
+                    final Stock stock;
+                    sym = sym.toUpperCase();
+                    stock = YahooFinance.get(sym);
+                    addStockToArrayList(stock);
+                    ((MainActivity) ctx).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            synchronized (adapter) {
+                                adapter.add(stock);
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    e.getMessage();
+                }
             }
         }
     }
@@ -129,12 +132,16 @@ public class ThreadStock implements Runnable {
             final Stock stock;
             ticker = ticker.toUpperCase();
             stock = YahooFinance.get(ticker);
-            addStockToArrayList(stock);
+            synchronized (output) {
+                addStockToArrayList(stock);
+            }
             ((MainActivity)ctx).runOnUiThread(new Runnable(){
                 @Override
                 public void run() {
-                     adapter.add(stock);
-                     adapter.notifyDataSetChanged();
+                    synchronized (adapter) {
+                        adapter.add(stock);
+                        adapter.notifyDataSetChanged();
+                    }
                 }
             });
         }
@@ -145,14 +152,10 @@ public class ThreadStock implements Runnable {
 
     private void addStockToArrayList(Stock s)
     {
-        outMtx.lock();
         try {
-            output.add(s);
+                output.add(s);
         } catch (Exception e) {
             Log.d("Pushback Error:", e.getMessage());
-        }
-        finally {
-            outMtx.unlock();
         }
     }
 
@@ -160,17 +163,21 @@ public class ThreadStock implements Runnable {
     {
         while(!((MainActivity)ctx).mFinished) {
             while (!((MainActivity)ctx).mPaused) {
-                for (Stock s : output) {
-                    try {
-                        s.getQuote(true).getPrice();
-                        ((MainActivity)ctx).runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
-                    } catch (Exception e) {
-                        e.getMessage();
+                synchronized (output) {
+                    for (int i = updateRangeLow; i <= updateRangeTop; ++i) {
+                        try {
+                            output.get(i).getQuote(true).getPrice();
+                            ((MainActivity) ctx).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    synchronized (adapter) {
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                }
+                            });
+                        } catch (Exception e) {
+                            e.getMessage();
+                        }
                     }
                 }
                 try {
@@ -179,14 +186,14 @@ public class ThreadStock implements Runnable {
                     e.getMessage();
                 }
             }
+            }
         }
-    }
 
     private void updateOne()
     {
-        while(df.mFinished) {
-            while (df.mPaused) {
-                {
+        while(!df.mFinished) {
+            while (!df.mPaused) {
+
                     try {
                         selectedStock = getStockDetails(sym);
                         ((MainActivity) ctx).runOnUiThread(new Runnable() {
@@ -215,7 +222,6 @@ public class ThreadStock implements Runnable {
                     } catch (Exception e) {
                         e.getMessage();
                     }
-                }
             }
         }
     }
