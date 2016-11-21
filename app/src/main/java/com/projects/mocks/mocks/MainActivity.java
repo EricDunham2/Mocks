@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
 
-        if(/*settings.getBoolean("firstRun", true)*/true)
+        if(settings.getBoolean("firstRun", true))
         {
             //do stuff if the application is running the first time, such as do the showy showy for the swipe activity, and get their name and poerty level and shit
             Intent i = new Intent(this, FirstTimeRunActivity.class);

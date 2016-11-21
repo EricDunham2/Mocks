@@ -121,7 +121,7 @@ public class DBAdapter
 
     public Cursor getFiftySymbols(int startIndex)
     {
-        String whereClause = SYMBOLS_ID + " => ?";
+        String whereClause = SYMBOLS_ID + " >= ?";
         String[] whereArgs = new String[]{""+startIndex};
 
         return db.query(SYMBOLS_TABLE, new String[]{SYMBOLS_NAME}, whereClause, whereArgs, null, null, null, "50");

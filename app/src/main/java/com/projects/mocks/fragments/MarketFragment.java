@@ -2,6 +2,7 @@ package com.projects.mocks.fragments;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -30,6 +31,8 @@ public class MarketFragment extends Fragment
     public ArrayList<Stock> output;
     public ArrayAdapter<Stock> adapter;
     public Thread updateThread;
+    private int databaseIndex;
+    private ArrayList<String> newStocks;
     EditText searchFor;
     //DON'T EDIT THIS. Anything you want done in a fragment should go in the "onViewCreated" function.
     @Override
@@ -47,21 +50,34 @@ public class MarketFragment extends Fragment
         //used for back stacking and making sure the correct nav item is selected.
         if(MainActivity.navigationView != null)
             MainActivity.navigationView.getMenu().findItem(R.id.nav_market).setChecked(true);
-
+        databaseIndex = 0;
+        newStocks = new ArrayList<>();
         output = new ArrayList<>();
         stocklv = (ListView) getView().findViewById(R.id.AllStocks);
         setStockListView();
         adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
         stocklv.setAdapter(adapter);
+
       ThreadParams addParams = new ThreadParams();
                     addParams.output = output;
                     addParams.adapter = adapter;
-                    addParams.mth = "ADD";
-                    addParams.sym = "GOOGL";
-//        ThreadStock threadStock = new ThreadStock("ADD",getContext(),tp);
-//        threadStock.sym = "AAPL"; // TODO Replace with for loop to go through all stocks
-//        Thread thread = new Thread(threadStock);
-//        thread.start();
+                    addParams.mth = "ADD_MULTIPLE";
+        MainActivity.db.open();
+        Cursor cursor = MainActivity.db.getFiftySymbols(databaseIndex);
+
+        if(cursor.moveToFirst())
+        {
+            cursor.moveToFirst();
+            while(!cursor.isAfterLast())
+            {
+                newStocks.add(cursor.getString(cursor.getColumnIndex("Name")));
+                cursor.moveToNext();
+            }
+        }
+        ThreadStock threadStock = new ThreadStock(addParams);
+                    threadStock.stocksToAdd = newStocks;
+        Thread thread = new Thread(threadStock);
+        thread.start();
 
         ThreadParams updateParams = new ThreadParams();
             updateParams.adapter = adapter;

@@ -76,8 +76,11 @@ public class ThreadStock implements Runnable {
             case "UPDATE_ONE":
                 updateOne();
                 break;
-            case "ADD":
+            case "ADD_SINGLE":
                 addStockToPortfolio(sym);
+                break;
+            case "ADD_MULTIPLE":
+                addMultipleStocksToListView();
                 break;
             case "HISTORY":
                 getStockHistory(from, to, sym);
