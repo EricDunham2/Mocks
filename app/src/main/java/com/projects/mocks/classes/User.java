@@ -10,6 +10,7 @@ public class User {
     private int rank;
     final public String username;
     public BigDecimal ROI;
+    public BigDecimal Balance;
 
     public User(String username){this.username = username;}
 
