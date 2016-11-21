@@ -69,5 +69,26 @@ public class OverviewFragment extends Fragment
 //        TextView tv = (TextView)getView().findViewById(R.id.testBox);
 //        String st = slist.get(0);
 //        tv.setText(st);
+        if(MainActivity.db != null)
+        {
+            MainActivity.db.open();
+
+            Cursor cursor = MainActivity.db.getFiftySymbols(0);
+            if (cursor.moveToFirst())
+            {
+                cursor.moveToFirst();
+                cursor.moveToNext();
+            }
+
+            cursor = MainActivity.db.getAllSymbols();
+            if (cursor.moveToFirst())
+            {
+                cursor.moveToFirst();
+                cursor.moveToNext();
+            }
+
+
+            MainActivity.db.close();
+        }
     }
 }

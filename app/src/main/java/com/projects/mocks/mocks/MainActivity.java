@@ -34,11 +34,14 @@ import com.projects.mocks.fragments.OverviewFragment;
 import com.projects.mocks.fragments.SettingsFragment;
 import com.projects.mocks.fragments.ShopFragment;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 
@@ -92,29 +95,53 @@ public class MainActivity extends AppCompatActivity
         }
         else
         {
-            //do database maintenance if needed.
-            db = new DBAdapter(this);
-
-            try{
-                String destPath = "/data/data/" + getPackageName() + "/databases";
-                File f = new File(destPath);
-                if(!f.exists() || f.listFiles().length < 1)
+            progress = ProgressDialog.show(this, "Setting things up!", "Please wait while we get everything set up for you. This may take a while.", true);
+            db = new DBAdapter(MainActivity.this);
+            new Thread(new Runnable() {
+                @Override
+                public void run()
                 {
-                    f.mkdir();
-                    f.createNewFile();
+                    boolean dbCreated = false;
+                    //do database maintenance if needed.
 
-                    CopyDB(getBaseContext().getAssets().open("mocksdb"), new FileOutputStream(destPath + "/mocksdb"));
+
+                    try{
+                        String destPath = "/data/data/" + getPackageName() + "/databases";
+                        File f = new File(destPath);
+                        if(!f.exists() || f.listFiles().length < 1)
+                        {
+                            f.mkdir();
+                            f.createNewFile();
+
+                            CopyDB(getBaseContext().getAssets().open("mocksdb.db"), new FileOutputStream(destPath + "/mocksdb"));
+                            dbCreated = true;
+                        }
+                    }
+                    catch (FileNotFoundException e)
+                    {
+                        Log.d("FILE NOT FOUND", e.getMessage());
+                    }
+                    catch (IOException e)
+                    {
+                        Log.d("IO Exception", e.getMessage());
+                    }
+                    //end of database maintenance
+
+//                    if(dbCreated)
+//                    {
+//                        doAllInserts();
+//                    }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run()
+                        {
+                            progress.dismiss();
+                        }
+                    });
                 }
-            }
-            catch (FileNotFoundException e)
-            {
-                Log.d("FILE NOT FOUND", e.getMessage());
-            }
-            catch (IOException e)
-            {
-                Log.d("IO Exception", e.getMessage());
-            }
-            //end of database maintenance
+            }).start();
+
         }
 
 
@@ -157,6 +184,20 @@ public class MainActivity extends AppCompatActivity
 
         main = this;
     }
+
+        //no longer needed, but kept here just in case.
+//    public void doAllInserts(){
+//        String line = "";
+//        try (BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("tickers.csv")))) {
+//            MainActivity.db.open();
+//            while ((line = br.readLine()) != null) {
+//                MainActivity.db.insertSymbol(line);
+//            }
+//            MainActivity.db.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void CopyDB(InputStream inputStream, OutputStream outputStream) throws IOException
     {
