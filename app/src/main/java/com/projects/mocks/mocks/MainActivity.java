@@ -63,12 +63,22 @@ public class MainActivity extends AppCompatActivity
     public boolean mFinished = false;
     private android.app.FragmentManager fm;
     public static NavigationView navigationView;
+    public static User user;
     //TODO: Make sure that when you move to a new fragment you stop certain fragments
     SharedPreferences settings;
     SharedPreferences.Editor editor;
 
     //this might need to be static?
     public static DBAdapter db;
+
+
+    //*
+    // Shared Preferences = "settings", CONTEXT_RESTRICTED
+    // theme: boolean
+    // startingBalance: int
+    //
+    //
+    // *//
 
     protected void onCreate(Bundle savedInstanceState)
     {

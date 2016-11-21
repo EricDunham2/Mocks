@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.projects.mocks.classes.ThreadLeaderboard;
+import com.projects.mocks.fragments.BalanceIntroFragment;
 import com.projects.mocks.fragments.FinalIntroFragment;
 import com.projects.mocks.fragments.ScreenSlidePageFragment;
 
@@ -109,8 +110,10 @@ public class FirstTimeRunActivity extends FragmentActivity
         @Override
         public Fragment getItem(int position)
         {
-            if(position < 4)
+            if(position < 3)
                 return new ScreenSlidePageFragment();
+            else if(position == 3)
+                return new BalanceIntroFragment();
             return new FinalIntroFragment();
         }
 

@@ -11,6 +11,7 @@ public class User {
     final public String username;
     public BigDecimal ROI;
     public BigDecimal Balance;
+    public BigDecimal StartingAmount;
 
     public User(String username){this.username = username;}
 

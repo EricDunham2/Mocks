@@ -1,0 +1,55 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.projects.mocks.fragments.BalanceIntroFragment"
+    android:background="?attr/bgColor">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/groupBalance">
+
+        <RadioButton
+            android:text="1,000"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:background="@drawable/radio_button_selected_style"
+            android:button="@null"
+            android:checked="true"
+            android:id="@+id/rbtnBalPoor"
+            android:textColor="@color/colorWhite"
+            android:textAppearance="@android:style/TextAppearance.Material.Medium"
+            android:textAlignment="center"/>
+
+        <RadioButton
+            android:text="10,000"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:background="@drawable/radio_button_selected_style"
+            android:button="@null"
+            android:id="@+id/rbtnBalMiddle"
+            android:layout_marginTop="40dp"
+            android:textColor="@color/colorWhite"
+            android:textAppearance="@android:style/TextAppearance.Material.Medium"
+            android:textAlignment="center"/>
+
+        <RadioButton
+            android:text="100,000"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:background="@drawable/radio_button_selected_style"
+            android:button="@null"
+            android:id="@+id/rbtnBalRich"
+            android:layout_marginTop="40dp"
+            android:textColor="@color/colorWhite"
+            android:textAppearance="@android:style/TextAppearance.Material.Medium"
+            android:textAlignment="center"/>
+    </RadioGroup>
+
+
+</RelativeLayout>

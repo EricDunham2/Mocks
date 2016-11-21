@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/colorGrey">
+
+    <item>
+        <selector>
+            <item android:state_checked="true">
+                <shape android:shape="rectangle" >
+                    <corners android:radius="0dp" />
+                    <solid android:color="@color/colorPrimary" />
+                </shape>
+            </item>
+
+            <item>
+                <shape android:shape="rectangle"  >
+                    <corners android:radius="0dp" />
+                    <solid android:color="@color/colorBad" />
+                </shape>
+            </item>
+        </selector>
+    </item>
+
+</ripple>
