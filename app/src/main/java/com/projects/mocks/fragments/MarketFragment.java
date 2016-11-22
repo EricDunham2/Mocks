@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -31,12 +30,11 @@ import static com.projects.mocks.mocks.MainActivity.output;
  * A simple {@link Fragment} subclass.
  */
 public class MarketFragment extends Fragment {
-    private ListView stocklv;
-
+    private ListView allStocksListView;
     public Thread updateThread;
     private ArrayList<String> newStocks;
     ThreadStock updateStock;
-    EditText searchFor;  // TODO Somehow search the database and fill the listview idea: Query db make array of results copy current listview contents to new array and replace with query values on "" replace with old values
+    EditText searchSymbolsFor;  // TODO Somehow search the database and fill the listview idea: Query db make array of results copy current listview contents to new array and replace with query values on "" replace with old values
 
     //DON'T EDIT THIS. Anything you want done in a fragment should go in the "onViewCreated" function.
     @Override
@@ -55,10 +53,11 @@ public class MarketFragment extends Fragment {
             MainActivity.navigationView.getMenu().findItem(R.id.nav_market).setChecked(true);
 
         newStocks = new ArrayList<>();
-        stocklv = (ListView) getView().findViewById(R.id.AllStocks);
+        searchSymbolsFor = (EditText)getView().findViewById(R.id.searchStocks);
+        allStocksListView = (ListView) getView().findViewById(R.id.AllStocks);
         setStockListView();
 
-        stocklv.setAdapter(adapter);
+        allStocksListView.setAdapter(adapter);
         if (adapter.getCount() == 0) {
             MainActivity.db.open();
             Cursor cursor = MainActivity.db.getFiftySymbols(databaseIndex);
@@ -97,10 +96,10 @@ public class MarketFragment extends Fragment {
     }
 
     private void setStockListView() {
-        stocklv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        allStocksListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Stock clk = (Stock) stocklv.getItemAtPosition(position);
+                Stock clk = (Stock) allStocksListView.getItemAtPosition(position);
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
@@ -114,7 +113,7 @@ public class MarketFragment extends Fragment {
             }
         });
 
-        stocklv.setOnScrollListener(new AbsListView.OnScrollListener() {
+        allStocksListView.setOnScrollListener(new AbsListView.OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -124,7 +123,7 @@ public class MarketFragment extends Fragment {
 
             public void scrollComplete() {
                 int totalItemCount = adapter.getCount();
-                if ((stocklv.getLastVisiblePosition() + 1) == totalItemCount && stocklv.getChildAt(stocklv.getChildCount() - 1).getBottom() <= stocklv.getHeight()) {
+                if ((allStocksListView.getLastVisiblePosition() + 1) == totalItemCount && allStocksListView.getChildAt(allStocksListView.getChildCount() - 1).getBottom() <= allStocksListView.getHeight()) {
                     MainActivity.db.open();
                     databaseIndex += 50;
                     Cursor cursor = MainActivity.db.getFiftySymbols(databaseIndex);
@@ -153,8 +152,8 @@ public class MarketFragment extends Fragment {
 
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                int firstVisibleRow = stocklv.getFirstVisiblePosition();
-                int lastVisibleRow = stocklv.getLastVisiblePosition();
+                int firstVisibleRow = allStocksListView.getFirstVisiblePosition();
+                int lastVisibleRow = allStocksListView.getLastVisiblePosition();
                 for (int i = firstVisibleRow; i <= lastVisibleRow; i++) {
                     updateStock.updateRangeLow = firstVisibleRow;
                     updateStock.updateRangeTop = lastVisibleRow;
