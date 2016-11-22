@@ -49,12 +49,18 @@ public class BalanceIntroFragment extends android.support.v4.app.Fragment
                 {
                     case R.id.rbtnBalPoor:
                         editor.putInt("startingBalance", 1000);
+                        editor.putString("currentBalance", "1000");
+                        editor.putString("difficulty", "easy");
                         break;
                     case R.id.rbtnBalMiddle:
                         editor.putInt("startingBalance", 10000);
+                        editor.putString("currentBalance", "10000");
+                        editor.putString("difficulty", "medium");
                         break;
                     case R.id.rbtnBalRich:
                         editor.putInt("startingBalance", 10000);
+                        editor.putString("currentBalance", "100000");
+                        editor.putString("difficulty", "hard");
                         break;
                 }
                 editor.commit();

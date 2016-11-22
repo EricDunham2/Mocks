@@ -94,6 +94,8 @@ public class FirstTimeRunActivity extends FragmentActivity
                     editor.putBoolean("firstRun", false);
                     editor.commit();
 
+                    editor.putString("username", tv.getText().toString());
+
                     Intent i = new Intent(this, MainActivity.class);
                     startActivity(i);
                 }

@@ -85,7 +85,10 @@
     //*
     // Shared Preferences = "settings", CONTEXT_RESTRICTED
     // theme: boolean
+    // username: string
     // startingBalance: int
+    // currentBalance: string
+    // difficulty: string
     //
     //
     // *//
@@ -110,7 +113,7 @@
         setContentView(R.layout.activity_main);
 
 
-        if(settings.getBoolean("firstRun", true))
+        if(/*settings.getBoolean("firstRun", true)*/ true)
         {
             //do stuff if the application is running the first time, such as do the showy showy for the swipe activity, and get their name and poerty level and shit
             Intent i = new Intent(this, FirstTimeRunActivity.class);
@@ -118,6 +121,12 @@
         }
         else
         {
+            user = new User(settings.getString("username", ""));
+            user.StartingAmount = new BigDecimal(settings.getString("startingBalance", "0"));
+            user.Balance = new BigDecimal(settings.getString("currentBalance", "0"));
+            user.difficulty = settings.getString("difficulty", "none");
+
+
             progress = ProgressDialog.show(this, "Setting things up!", "Please wait while we get everything set up for you. This may take a while.", true);
             db = new DBAdapter(MainActivity.this);
             new Thread(new Runnable() {
@@ -229,6 +238,14 @@
 //    }
 
 
+    @Override
+    protected void onStop()
+    {
+        //no other user member should have to be set.
+        if(user != null && user.username != "")
+            editor.putString("currentBalance", user.Balance.toString());
+        super.onStop();
+    }
 
     public void showBuyDialog()
     {
