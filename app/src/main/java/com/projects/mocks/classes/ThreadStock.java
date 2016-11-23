@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -46,14 +47,11 @@ public class ThreadStock implements Runnable {
     public  String sym;
     private Context ctx;
     public  ArrayAdapter<Stock> adapter;
-    public ArrayList<String> stocksToAdd;
     public  ArrayList<Stock> output;
     public DetailsFragment df;
     private Stock selectedStock;
     public int updateRangeTop;
     public int updateRangeLow;
-
-
 
     public ThreadStock(ThreadParams tp) //Multiple Stocks
     {
@@ -103,26 +101,39 @@ public class ThreadStock implements Runnable {
 
     private void addMultipleStocksToListView()
     {
-        synchronized (stocksToAdd) {
-            for (String sym : stocksToAdd) {
+        MainActivity.addingMutex.lock();
+        MarketFragment.midScrolling = true;
+        try {
+            for (Iterator<String> it = MainActivity.newStocks.iterator(); it.hasNext(); ) {
+                if (MainActivity.stopThread) {
+                    return;
+                }
+                String stockSym = it.next();
                 try {
                     final Stock stock;
-                    sym = sym.toUpperCase();
-                    stock = YahooFinance.get(sym);
+                    stockSym = stockSym.toUpperCase();
+                    stock = YahooFinance.get(stockSym);
                     addStockToArrayList(stock);
                     ((MainActivity) ctx).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            synchronized (adapter) {
                                 adapter.add(stock);
                                 adapter.notifyDataSetChanged();
-                            }
+
                         }
                     });
                 } catch (Exception e) {
                     e.getMessage();
                 }
             }
+        }
+        catch (Exception e)
+        {
+            e.getMessage();
+        }
+        finally {
+            MarketFragment.midScrolling = false;
+            MainActivity.addingMutex.unlock();
         }
     }
 
@@ -193,8 +204,7 @@ public class ThreadStock implements Runnable {
     {
         while(!df.mFinished) {
             while (!df.mPaused) {
-
-                    try {
+                try {
                         selectedStock = getStockDetails(sym);
                         ((MainActivity) ctx).runOnUiThread(new Runnable() {
                             @Override

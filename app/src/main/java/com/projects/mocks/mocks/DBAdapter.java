@@ -119,6 +119,13 @@ public class DBAdapter
         return db.query(SYMBOLS_TABLE, new String[] {SYMBOLS_NAME}, null, null, null, null, null);
     }
 
+    public Cursor searchForSymbol(String pattern)
+    {
+        String whereClause = "Name Like\"" +  pattern + "%\"";
+        return db.query(SYMBOLS_TABLE, new String[] {SYMBOLS_NAME}, whereClause, null, null, null, null, null);
+    }
+
+
     public Cursor getFiftySymbols(int startIndex)
     {
          String whereClause = SYMBOLS_ID + " >= " + startIndex;

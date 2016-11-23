@@ -49,6 +49,8 @@
         import java.io.OutputStream;
         import java.math.BigDecimal;
         import java.util.ArrayList;
+        import java.util.List;
+        import java.util.concurrent.locks.ReentrantLock;
 
         import yahoofinance.Stock;
 
@@ -64,14 +66,17 @@
     private SettingsFragment settingsFrag;
     private FloatingActionButton fab;
     private ProgressDialog progress;
-    static public ArrayList<Stock> output;
+    static public ArrayList<Stock> allStocksArrayList;
     static public ArrayAdapter<Stock> adapter;
+    static public ReentrantLock allStocksMutex;
+    static public ReentrantLock addingMutex;
+    public static boolean stopThread;
     static public int databaseIndex;
     public static Activity main;
     public boolean mPaused = false;
-    public User usr = new User("Its 3am so please work"); //TODO: Remove after testing
     public boolean mFinished = false;
     private android.app.FragmentManager fm;
+    public static List<String> newStocks;
     public static NavigationView navigationView;
     public static User user;
     //TODO: Make sure that when you move to a new fragment you stop certain fragments
@@ -98,9 +103,13 @@
 
         settings = getSharedPreferences("settings", CONTEXT_RESTRICTED);
         editor = settings.edit();
-        output = new ArrayList<>();
+        allStocksArrayList = new ArrayList<>();
         databaseIndex = 1;
+        stopThread = false;
         adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1);
+        addingMutex = new ReentrantLock();
+        allStocksMutex = new ReentrantLock();
+        newStocks = new ArrayList<>();
 
         if(settings.getBoolean("theme", false)){
             setTheme(R.style.AppThemeDark);
@@ -113,7 +122,7 @@
         setContentView(R.layout.activity_main);
 
 
-        if(/*settings.getBoolean("firstRun", true)*/ true)
+        if(settings.getBoolean("firstRun", true))
         {
             //do stuff if the application is running the first time, such as do the showy showy for the swipe activity, and get their name and poerty level and shit
             Intent i = new Intent(this, FirstTimeRunActivity.class);
@@ -122,7 +131,7 @@
         else
         {
             user = new User(settings.getString("username", ""));
-            user.StartingAmount = new BigDecimal(settings.getString("startingBalance", "0"));
+            user.StartingAmount = new BigDecimal(settings.getInt("startingBalance", 0));
             user.Balance = new BigDecimal(settings.getString("currentBalance", "0"));
             user.difficulty = settings.getString("difficulty", "none");
 
@@ -500,31 +509,5 @@
         super.onPause();
         mPaused = false;
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //TODO: Check if user exists in database, if not create a new one using addU
-        usr.ROI = new BigDecimal(10000000000.00);
-        addU();
-    }
-
-    public void addU()
-    {
-        ThreadLeaderboard tl = new ThreadLeaderboard();
-        tl.username =  usr.username; //newUser.getText().toString();
-        tl.method = "ADD";
-        Thread t = new Thread(tl);
-        t.start();
-    }
-
-   /* public void test(View view)
-    {
-        ThreadStock st = new ThreadStock(this);
-        st.mth  = "Add";
-        Thread t = new Thread(st);
-        t.start();
-    }*/
-
 
 }

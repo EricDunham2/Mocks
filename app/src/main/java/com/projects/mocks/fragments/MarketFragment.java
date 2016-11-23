@@ -1,15 +1,20 @@
 package com.projects.mocks.fragments;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.annotation.MainThread;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -22,8 +27,9 @@ import java.util.ArrayList;
 import yahoofinance.Stock;
 
 import static com.projects.mocks.mocks.MainActivity.adapter;
+import static com.projects.mocks.mocks.MainActivity.allStocksArrayList;
 import static com.projects.mocks.mocks.MainActivity.databaseIndex;
-import static com.projects.mocks.mocks.MainActivity.output;
+import static com.projects.mocks.mocks.MainActivity.newStocks;
 
 
 /**
@@ -31,10 +37,14 @@ import static com.projects.mocks.mocks.MainActivity.output;
  */
 public class MarketFragment extends Fragment {
     private ListView allStocksListView;
-    public Thread updateThread;
-    private ArrayList<String> newStocks;
+    Thread updateThread;
+    Thread addThread;
     ThreadStock updateStock;
-    EditText searchSymbolsFor;  // TODO Somehow search the database and fill the listview idea: Query db make array of results copy current listview contents to new array and replace with query values on "" replace with old values
+    ThreadStock addStocks;
+    EditText searchSymbolsFor;
+    ArrayList<String> listViewState;
+    boolean isSearchResults;
+    public static boolean midScrolling;
 
     //DON'T EDIT THIS. Anything you want done in a fragment should go in the "onViewCreated" function.
     @Override
@@ -52,11 +62,13 @@ public class MarketFragment extends Fragment {
         if (MainActivity.navigationView != null)
             MainActivity.navigationView.getMenu().findItem(R.id.nav_market).setChecked(true);
 
-        newStocks = new ArrayList<>();
+        MainActivity.stopThread = false;
         searchSymbolsFor = (EditText)getView().findViewById(R.id.searchStocks);
         allStocksListView = (ListView) getView().findViewById(R.id.AllStocks);
         setStockListView();
-
+        listViewState = new ArrayList<>();
+        isSearchResults = false;
+        midScrolling = false;
         allStocksListView.setAdapter(adapter);
         if (adapter.getCount() == 0) {
             MainActivity.db.open();
@@ -72,19 +84,18 @@ public class MarketFragment extends Fragment {
             MainActivity.db.close();
 
             ThreadParams addParams = new ThreadParams();
-            addParams.output = output;
+            addParams.output = allStocksArrayList;
             addParams.adapter = adapter;
             addParams.mth = "ADD_MULTIPLE";
             addParams.ctx = getContext();
-            ThreadStock threadStock = new ThreadStock(addParams);
-            threadStock.stocksToAdd = newStocks;
-            Thread thread = new Thread(threadStock);
-            thread.start();
 
+            addStocks = new ThreadStock(addParams);
+            addThread = new Thread(addStocks);
+            addThread.start();
 
             ThreadParams updateParams = new ThreadParams();
             updateParams.adapter = adapter;
-            updateParams.output = output;
+            updateParams.output = allStocksArrayList;
             updateParams.ctx = getContext();
             updateParams.mth = "UPDATE_MULTIPLE";
             updateStock = new ThreadStock(updateParams);
@@ -117,13 +128,15 @@ public class MarketFragment extends Fragment {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
+             if(isSearchResults == false)
                 this.scrollComplete();
-
             }
 
             public void scrollComplete() {
                 int totalItemCount = adapter.getCount();
-                if ((allStocksListView.getLastVisiblePosition() + 1) == totalItemCount && allStocksListView.getChildAt(allStocksListView.getChildCount() - 1).getBottom() <= allStocksListView.getHeight()) {
+                if ((allStocksListView.getLastVisiblePosition() + 1) == totalItemCount &&
+                        allStocksListView.getChildAt(allStocksListView.getChildCount() - 1).getBottom() <= allStocksListView.getHeight() &&
+                        midScrolling == false) {
                     MainActivity.db.open();
                     databaseIndex += 50;
                     Cursor cursor = MainActivity.db.getFiftySymbols(databaseIndex);
@@ -136,16 +149,8 @@ public class MarketFragment extends Fragment {
                         }
                     }
                     MainActivity.db.close();
-
-                    ThreadParams addParams = new ThreadParams();
-                    addParams.output = output;
-                    addParams.adapter = adapter;
-                    addParams.mth = "ADD_MULTIPLE";
-                    addParams.ctx = getContext();
-                    ThreadStock threadStock = new ThreadStock(addParams);
-                    threadStock.stocksToAdd = newStocks;
-                    Thread thread = new Thread(threadStock);
-                    thread.start();
+                    addThread = new Thread(addStocks);
+                    addThread.start();
                 }
             }
 
@@ -160,5 +165,59 @@ public class MarketFragment extends Fragment {
                 }
             }
         });
+
+
+
+        searchSymbolsFor.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                MainActivity.stopThread = true;
+                if (s.toString().equals("")) {
+                    newStocks.clear();
+                    adapter.clear();
+                    for (String stockSymbol : listViewState)
+                        newStocks.add(stockSymbol);
+                    listViewState.clear();
+                    isSearchResults = false;
+                }
+                else
+                {
+                    MainActivity.db.open();
+                    isSearchResults = true;
+                    if (listViewState.isEmpty())
+                        listViewState = new ArrayList<>(newStocks);
+
+                    allStocksArrayList.clear();
+                    Cursor cursor = MainActivity.db.searchForSymbol(s.toString());
+                    newStocks.clear();
+                    adapter.clear();
+
+                    if (cursor.moveToFirst()) {
+                        cursor.moveToFirst();
+                        while (!cursor.isAfterLast()) {
+                            newStocks.add(cursor.getString(cursor.getColumnIndex("Name")));
+                            cursor.moveToNext();
+                        }
+                    }
+                }
+                MainActivity.stopThread = false;
+                addThread = new Thread(addStocks);
+                addThread.start();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
+
+
+
     }
 }
