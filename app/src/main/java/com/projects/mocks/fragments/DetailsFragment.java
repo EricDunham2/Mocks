@@ -32,8 +32,7 @@ public class DetailsFragment extends Fragment {
     private LineChart chart;
     public String activeStockDetails;
     private RadioGroup rgroup;
-    public boolean mPaused;
-    public boolean mFinished;
+    public static boolean detailsPaused;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,8 +50,7 @@ public class DetailsFragment extends Fragment {
         setChartParams();
         chart.invalidate();
         chart.notifyDataSetChanged();
-        mPaused = false;
-        mFinished = false;
+        detailsPaused = false;
         activeStockDetails = getArguments().get("selectedStock").toString();
 
         try {
@@ -158,20 +156,12 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mPaused = false;
+        detailsPaused = false;
     }
 
     @Override
     public void onPause() {
-        super.onPause();
-        mPaused = true;
+        super.onResume();
+        detailsPaused = true;
     }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        mFinished = true;
-    }
-
-
 }

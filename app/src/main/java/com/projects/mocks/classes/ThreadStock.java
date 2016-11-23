@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import com.github.mikephil.charting.charts.LineChart;
 import com.projects.mocks.fragments.DetailsFragment;
 import com.projects.mocks.fragments.MarketFragment;
@@ -20,8 +19,6 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.gson.Gson;
 import com.projects.mocks.mocks.R;
-import com.projects.mocks.mocks.databinding.FragmentDetailsBinding;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -32,14 +29,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
-//TODO: Create Custom constructor for each method, remove unused parts/clean up
+
 public class ThreadStock implements Runnable {
     public  String mth;
     public  Calendar from;
@@ -48,8 +42,8 @@ public class ThreadStock implements Runnable {
     private Context ctx;
     public  ArrayAdapter<Stock> adapter;
     public  ArrayList<Stock> output;
+    public Stock singleStockReturn;
     public DetailsFragment df;
-    private Stock selectedStock;
     public int updateRangeTop;
     public int updateRangeLow;
 
@@ -62,7 +56,6 @@ public class ThreadStock implements Runnable {
         from = tp.from;
         to = tp.to;
         sym = tp.sym;
-        df = tp.df;
     }
 
     @Override
@@ -74,14 +67,14 @@ public class ThreadStock implements Runnable {
             case "UPDATE_ONE":
                 updateOne();
                 break;
-            case "ADD_SINGLE":
-                addStockToPortfolio(sym);
-                break;
             case "ADD_MULTIPLE":
                 addMultipleStocksToListView();
                 break;
             case "HISTORY":
                 getStockHistory(from, to, sym);
+                break;
+            case "DETAILS":
+                singleStockReturn = getStockDetails(sym);
                 break;
         }
     }
@@ -137,30 +130,6 @@ public class ThreadStock implements Runnable {
         }
     }
 
-    private void addStockToPortfolio(String ticker)
-    {
-        try {
-            final Stock stock;
-            ticker = ticker.toUpperCase();
-            stock = YahooFinance.get(ticker);
-            synchronized (output) {
-                addStockToArrayList(stock);
-            }
-            ((MainActivity)ctx).runOnUiThread(new Runnable(){
-                @Override
-                public void run() {
-                    synchronized (adapter) {
-                        adapter.add(stock);
-                        adapter.notifyDataSetChanged();
-                    }
-                }
-            });
-        }
-        catch (Exception e){
-            e.getMessage();
-        }
-    }
-
     private void addStockToArrayList(Stock s)
     {
         try {
@@ -172,8 +141,8 @@ public class ThreadStock implements Runnable {
 
     private void updateMultiple()
     {
-        while(!((MainActivity)ctx).mFinished) {
-            while (!((MainActivity)ctx).mPaused) {
+        while(!MainActivity.mFinished) {
+            while (!MarketFragment.marketPaused) {
                 synchronized (output) {
                     for (int i = updateRangeLow; i <= updateRangeTop; ++i) {
                         try {
@@ -198,15 +167,17 @@ public class ThreadStock implements Runnable {
                 }
             }
             }
+        return;
         }
 
     private void updateOne()
     {
-        while(!df.mFinished) {
-            while (!df.mPaused) {
+        while(!MainActivity.mFinished) {
+            while (!DetailsFragment.detailsPaused) {
                 try {
-                        selectedStock = getStockDetails(sym);
-                        ((MainActivity) ctx).runOnUiThread(new Runnable() {
+                    MainActivity.selectedStock = getStockDetails(sym);
+                    if(MainActivity.selectedStock.getQuote() == null || MainActivity.selectedStock == null) {return;}
+                    ((MainActivity) ctx).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 TextView high = (TextView) df.getView().findViewById(R.id.DetailsHigh);
@@ -215,12 +186,12 @@ public class ThreadStock implements Runnable {
                                 TextView percent = (TextView) df.getView().findViewById(R.id.DetailsPercent);
                                 TextView symbol = (TextView) df.getView().findViewById(R.id.Symbol);
                                 TextView company = (TextView) df.getView().findViewById(R.id.DetailsCompany);
-                                high.setText(selectedStock.getQuote().getDayHigh().toString());
-                                value.setText(selectedStock.getQuote().getPrice().toString());
-                                low.setText(selectedStock.getQuote().getDayLow().toString());
-                                percent.setText(selectedStock.getQuote().getChangeFromAvg50InPercent().toString());
-                                symbol.setText(selectedStock.getSymbol().toString());
-                                company.setText(selectedStock.getName().toString());
+                                high.setText(MainActivity.selectedStock.getQuote().getDayHigh().toString());
+                                value.setText(MainActivity.selectedStock.getQuote().getPrice().toString());
+                                low.setText(MainActivity.selectedStock.getQuote().getDayLow().toString());
+                                percent.setText(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString());
+                                symbol.setText(MainActivity.selectedStock.getSymbol().toString());
+                                company.setText(MainActivity.selectedStock.getName().toString());
                             }
                         });
                     } catch (Exception e) {
@@ -234,6 +205,7 @@ public class ThreadStock implements Runnable {
                     }
             }
         }
+        return;
     }
 
     private int daysBetween(Date d1, Date d2){
@@ -243,7 +215,6 @@ public class ThreadStock implements Runnable {
     private void getStockHistory(Calendar from, Calendar to, String sym) //Only used in details view
     {
         try {
-
             Stock stock = YahooFinance.get(sym);
             SeriesContainer[] dataSet;
             final ArrayList<Float> yAxisValues  = new ArrayList<Float>(){};

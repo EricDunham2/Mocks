@@ -54,17 +54,19 @@ public class LeaderboardFragment extends Fragment {
 
     public void updateU() {
         ThreadLeaderboard tl = new ThreadLeaderboard();
-        tl.username = "Cristian";
-        tl.roi = new BigDecimal(10000000);
         tl.method = "UPDATE";
         Thread t = new Thread(tl);
         t.start();
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public User[] leaderboard() {
         ThreadLeaderboard tl = new ThreadLeaderboard();
         try {
-            tl.username = "Cristian";
             tl.method = "GET";
             Thread t = new Thread(tl);
             t.start();

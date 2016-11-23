@@ -6,12 +6,9 @@
         import android.content.DialogInterface;
         import android.content.Intent;
         import android.content.SharedPreferences;
-        import android.graphics.Color;
         import android.os.Bundle;
         import android.os.SystemClock;
         import android.support.design.widget.FloatingActionButton;
-        import android.support.design.widget.Snackbar;
-        import android.support.v4.app.FragmentManager;
         import android.support.v7.app.AlertDialog;
         import android.support.v7.view.ContextThemeWrapper;
         import android.util.Log;
@@ -26,10 +23,8 @@
         import android.view.MenuItem;
         import android.widget.ArrayAdapter;
         import android.widget.Button;
-        import android.widget.CompoundButton;
-        import android.widget.EditText;
         import android.widget.NumberPicker;
-        import android.widget.Toast;
+
         import com.projects.mocks.classes.*;
         import com.projects.mocks.fragments.InventoryFragment;
         import com.projects.mocks.fragments.LeaderboardFragment;
@@ -38,14 +33,11 @@
         import com.projects.mocks.fragments.SettingsFragment;
         import com.projects.mocks.fragments.ShopFragment;
 
-        import java.io.BufferedReader;
         import java.io.File;
         import java.io.FileNotFoundException;
         import java.io.FileOutputStream;
-        import java.io.FileReader;
         import java.io.IOException;
         import java.io.InputStream;
-        import java.io.InputStreamReader;
         import java.io.OutputStream;
         import java.math.BigDecimal;
         import java.util.ArrayList;
@@ -73,13 +65,14 @@
     public static boolean stopThread;
     static public int databaseIndex;
     public static Activity main;
-    public boolean mPaused = false;
-    public boolean mFinished = false;
+    public static boolean mPaused = false;
+    public static boolean mFinished = false;
     private android.app.FragmentManager fm;
+    public static Stock selectedStock;
     public static List<String> newStocks;
     public static NavigationView navigationView;
     public static User user;
-    //TODO: Make sure that when you move to a new fragment you stop certain fragments
+
     SharedPreferences settings;
     SharedPreferences.Editor editor;
 
@@ -136,12 +129,12 @@
             user.difficulty = settings.getString("difficulty", "none");
 
 
-            progress = ProgressDialog.show(this, "Setting things up!", "Please wait while we get everything set up for you. This may take a while.", true);
+//            progress = ProgressDialog.show(this, "Setting things up!", "Please wait while we get everything set up for you. This may take a while.", true);
             db = new DBAdapter(MainActivity.this);
-            new Thread(new Runnable() {
-                @Override
-                public void run()
-                {
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run()
+//                {
                     boolean dbCreated = false;
                     //do database maintenance if needed.
 
@@ -173,15 +166,15 @@
 //                        doAllInserts();
 //                    }
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run()
-                        {
-                            progress.dismiss();
-                        }
-                    });
-                }
-            }).start();
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run()
+//                        {
+//                            progress.dismiss();
+//                        }
+//                    });
+                //}
+//            }).start();
 
         }
 
@@ -250,32 +243,40 @@
     @Override
     protected void onStop()
     {
-        //no other user member should have to be set.
+        super.onStop();
+        mFinished = true;
         if(user != null && user.username != "")
             editor.putString("currentBalance", user.Balance.toString());
-        super.onStop();
+        editor.commit();
+
     }
 
     public void showBuyDialog()
     {
+        if(selectedStock.getQuote() == null){return;}
         final Dialog d = new Dialog(MainActivity.this);
         d.setTitle("Number of stocks to purchase");
         d.setContentView(R.layout.buy_dialog);
-        Button b1 = (Button) d.findViewById(R.id.button1);
-        Button b2 = (Button) d.findViewById(R.id.button2);
+        Button buy = (Button) d.findViewById(R.id.btnBuy);
+        Button cancel = (Button) d.findViewById(R.id.btnCancel);
         final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
-        np.setMaxValue(100);
+        int topBuyQty = (int)Math.floor((user.Balance.doubleValue()/selectedStock.getQuote().getPrice().doubleValue()));
+        np.setMaxValue(topBuyQty);
         np.setMinValue(1);
         np.setWrapSelectorWheel(false);
-        b1.setOnClickListener(new View.OnClickListener()
+        buy.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v) {
                 ///Buy shit
+                MainActivity.db.open();
+                MainActivity.db.insertPortfolio(selectedStock.getSymbol(),np.getValue());
+                user.Balance = user.Balance.subtract(selectedStock.getQuote().getPrice().multiply(new BigDecimal(np.getValue())));
+                MainActivity.db.close();
                 d.dismiss();
             }
         });
-        b2.setOnClickListener(new View.OnClickListener()
+        cancel.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v) {
@@ -502,6 +503,9 @@
     protected void onPause() {
         super.onPause();
         mPaused = true;
+        if(user != null && user.username != "")
+            editor.putString("currentBalance", user.Balance.toString());
+        editor.commit();
     }
 
     @Override
@@ -509,5 +513,4 @@
         super.onPause();
         mPaused = false;
     }
-
 }

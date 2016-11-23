@@ -27,11 +27,10 @@ import static com.projects.mocks.mocks.MainActivity.databaseIndex;
 
 public class ThreadLeaderboard implements Runnable {
     public String method = "ADD";
-    public String username;
-    public BigDecimal roi ;
     public int responseCode = 0;
     public User[] topPlayers = new User[11];
     private Gson gson = new Gson();
+    public String username;
 
     @Override
     public void run() {
@@ -77,7 +76,7 @@ public class ThreadLeaderboard implements Runnable {
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
                     String tempSymbol = cursor.getString(cursor.getColumnIndex("Symbol"));
-                    Integer tempQty = cursor.getInt(cursor.getColumnIndex("Qty"));
+                    Integer tempQty = cursor.getInt(cursor.getColumnIndex("QTY"));
                     portfolioStocks.put(tempSymbol,tempQty);
                     cursor.moveToNext();
                 }
@@ -88,8 +87,6 @@ public class ThreadLeaderboard implements Runnable {
                 Stock currStock = YahooFinance.get(entry.getKey());
                 totalValue += entry.getValue() * currStock.getQuote().getPrice().doubleValue();
             }
-
-
 
             String params = "username=" + MainActivity.user.username +"&roi=" + totalValue +"&level=" + MainActivity.user.difficulty;
             byte[] postData = params.getBytes(StandardCharsets.UTF_8);
@@ -130,7 +127,8 @@ public class ThreadLeaderboard implements Runnable {
         String response = "";
         try
         {
-            String params = "username=" + username;
+            String noSpaceUsername = username.replace(" ","%20");
+            String params = "username=" + noSpaceUsername;
             byte[] postData = params.getBytes(StandardCharsets.UTF_8);
             int postDataLength = postData.length;
             URL url = new URL("http://mocks.gear.host/newUser.php");
@@ -165,7 +163,8 @@ public class ThreadLeaderboard implements Runnable {
         String response = "";
         try
         {
-            URL url = new URL("http://mocks.gear.host/getLeaderboard.php?username="+ username + "&level=" + MainActivity.user.difficulty);
+            String noSpaceUsername = MainActivity.user.username.replace(" ","%20");
+            URL url = new URL("http://mocks.gear.host/getLeaderboard.php?username="+ noSpaceUsername + "&level=" + MainActivity.user.difficulty);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             response = readResponse(conn);

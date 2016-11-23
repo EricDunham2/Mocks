@@ -70,8 +70,8 @@ public class FirstTimeRunActivity extends FragmentActivity
             else
             {
                 ThreadLeaderboard tl = new ThreadLeaderboard();
-                tl.username =  tv.getText().toString(); //newUser.getText().toString();
                 tl.method = "ADD";
+                tl.username = tv.getText().toString();
                 Thread t = new Thread(tl);
                 t.start();
                 try
@@ -92,9 +92,8 @@ public class FirstTimeRunActivity extends FragmentActivity
                     settings = getSharedPreferences("settings", CONTEXT_RESTRICTED);
                     editor = settings.edit();
                     editor.putBoolean("firstRun", false);
-                    editor.commit();
-
                     editor.putString("username", tv.getText().toString());
+                    editor.commit();
 
                     Intent i = new Intent(this, MainActivity.class);
                     startActivity(i);

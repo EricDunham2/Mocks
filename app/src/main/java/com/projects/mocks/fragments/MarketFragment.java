@@ -1,12 +1,10 @@
 package com.projects.mocks.fragments;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.annotation.MainThread;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -14,23 +12,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-
 import com.projects.mocks.mocks.MainActivity;
 import com.projects.mocks.classes.*;
-import com.projects.mocks.mocks.R; // WHY!!!!!!!!!!!!!!!!!!!!!
-
+import com.projects.mocks.mocks.R;
 import java.util.ArrayList;
+import java.util.List;
 
 import yahoofinance.Stock;
-
 import static com.projects.mocks.mocks.MainActivity.adapter;
 import static com.projects.mocks.mocks.MainActivity.allStocksArrayList;
 import static com.projects.mocks.mocks.MainActivity.databaseIndex;
 import static com.projects.mocks.mocks.MainActivity.newStocks;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,7 +37,9 @@ public class MarketFragment extends Fragment {
     ThreadStock addStocks;
     EditText searchSymbolsFor;
     ArrayList<String> listViewState;
+    boolean reloadedFragment = false;
     boolean isSearchResults;
+    public static boolean marketPaused;
     public static boolean midScrolling;
 
     //DON'T EDIT THIS. Anything you want done in a fragment should go in the "onViewCreated" function.
@@ -57,11 +53,14 @@ public class MarketFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //leave this on top unless you're absolutely sure something needs to go above this
         super.onViewCreated(view, savedInstanceState);
-
         //used for back stacking and making sure the correct nav item is selected.
         if (MainActivity.navigationView != null)
             MainActivity.navigationView.getMenu().findItem(R.id.nav_market).setChecked(true);
+        fillListView();
+    }
 
+    private void fillListView()
+    {
         MainActivity.stopThread = false;
         searchSymbolsFor = (EditText)getView().findViewById(R.id.searchStocks);
         allStocksListView = (ListView) getView().findViewById(R.id.AllStocks);
@@ -82,6 +81,15 @@ public class MarketFragment extends Fragment {
                 }
             }
             MainActivity.db.close();
+        }
+        else if(MainActivity.allStocksArrayList.size() != 0)
+        {
+            newStocks.clear();
+            for(Stock s : allStocksArrayList)
+                newStocks.add(s.getSymbol());
+            allStocksArrayList.clear();
+            adapter.clear();
+        }
 
             ThreadParams addParams = new ThreadParams();
             addParams.output = allStocksArrayList;
@@ -103,7 +111,7 @@ public class MarketFragment extends Fragment {
             updateStock.updateRangeTop = 11;
             updateThread = new Thread(updateStock);
             updateThread.start();
-        }
+
     }
 
     private void setStockListView() {
@@ -175,38 +183,38 @@ public class MarketFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                MainActivity.stopThread = true;
-                if (s.toString().equals("")) {
-                    newStocks.clear();
-                    adapter.clear();
-                    for (String stockSymbol : listViewState)
-                        newStocks.add(stockSymbol);
-                    listViewState.clear();
-                    isSearchResults = false;
-                }
-                else
-                {
-                    MainActivity.db.open();
-                    isSearchResults = true;
-                    if (listViewState.isEmpty())
-                        listViewState = new ArrayList<>(newStocks);
+                if(!reloadedFragment) {
+                    MainActivity.stopThread = true;
+                    if (s.toString().equals("")) {
+                        newStocks.clear();
+                        adapter.clear();
+                        for (String stockSymbol : listViewState)
+                            newStocks.add(stockSymbol);
+                        listViewState.clear();
+                        isSearchResults = false;
+                    } else {
+                        MainActivity.db.open();
+                        isSearchResults = true;
+                        if (listViewState.isEmpty())
+                            listViewState = new ArrayList<>(newStocks);
 
-                    allStocksArrayList.clear();
-                    Cursor cursor = MainActivity.db.searchForSymbol(s.toString());
-                    newStocks.clear();
-                    adapter.clear();
+                        allStocksArrayList.clear();
+                        Cursor cursor = MainActivity.db.searchForSymbol(s.toString());
+                        newStocks.clear();
+                        adapter.clear();
 
-                    if (cursor.moveToFirst()) {
-                        cursor.moveToFirst();
-                        while (!cursor.isAfterLast()) {
-                            newStocks.add(cursor.getString(cursor.getColumnIndex("Name")));
-                            cursor.moveToNext();
+                        if (cursor.moveToFirst()) {
+                            cursor.moveToFirst();
+                            while (!cursor.isAfterLast()) {
+                                newStocks.add(cursor.getString(cursor.getColumnIndex("Name")));
+                                cursor.moveToNext();
+                            }
                         }
                     }
+                    MainActivity.stopThread = false;
+                    addThread = new Thread(addStocks);
+                    addThread.start();
                 }
-                MainActivity.stopThread = false;
-                addThread = new Thread(addStocks);
-                addThread.start();
             }
 
             @Override
@@ -214,10 +222,25 @@ public class MarketFragment extends Fragment {
 
             }
         });
-
-
-
-
-
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        marketPaused = false;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        marketPaused = true;
+        reloadedFragment = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        reloadedFragment = true;
+    }
+
 }

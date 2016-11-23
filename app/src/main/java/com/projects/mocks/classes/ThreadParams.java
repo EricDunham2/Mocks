@@ -20,5 +20,4 @@ public class ThreadParams
     public Context ctx;
     public  ArrayAdapter<Stock> adapter;
     public  ArrayList<Stock> output;
-    public DetailsFragment df;
 }
