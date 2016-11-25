@@ -105,6 +105,10 @@ public class DBAdapter
         return db.delete(PORTFOLIO_TABLE, PORTFOLIO_SYMBOL + "='" + name + "'", null) > 0;
     }
 
+    public void deleteAllPortfolio(){
+        db.execSQL("delete from " + PORTFOLIO_TABLE);
+    }
+
     public Cursor getPortfolioSymbol(String name){
             return db.query(PORTFOLIO_TABLE,new String[]{PORTFOLIO_QTY}," Symbol = '" + name +"'",null ,null, null,null);
     }

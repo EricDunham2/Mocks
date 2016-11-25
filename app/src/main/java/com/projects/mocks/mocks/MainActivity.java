@@ -2,6 +2,8 @@
 
         import android.app.Activity;
         import android.app.Dialog;
+        import android.app.FragmentManager;
+        import android.app.FragmentTransaction;
         import android.app.ProgressDialog;
         import android.content.Context;
         import android.content.DialogInterface;
@@ -28,6 +30,8 @@
         import android.widget.ArrayAdapter;
         import android.widget.Button;
         import android.widget.NumberPicker;
+        import android.widget.RadioButton;
+        import android.widget.RadioGroup;
         import android.widget.TextView;
 
         import com.projects.mocks.classes.*;
@@ -284,7 +288,6 @@
         {
             @Override
             public void onClick(View v) {
-                ///Buy shit
                 MainActivity.db.open();
                 Cursor cursor = MainActivity.db.getPortfolioSymbol(selectedStock.getSymbol());
                 if (cursor.moveToFirst())
@@ -336,7 +339,6 @@
         {
             @Override
             public void onClick(View v) {
-                ///Buy shit
                 MainActivity.db.open();
                 boolean deleteRow = false;
                 int updateReturn = 0;
@@ -364,6 +366,70 @@
         });
         d.show();
     }
+
+    public void showResetDialog()
+    {
+        final Dialog d = new Dialog(MainActivity.this);
+        d.setTitle("New Starting Balance");
+        d.setContentView(R.layout.bankrupt);
+
+        RadioGroup rgroup =  (RadioGroup)d.findViewById(R.id.rdogrpBank);
+        rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId)
+            {
+                switch (checkedId)
+                {
+                    case R.id.bankruptPoor:
+                        editor.putInt("startingBalance", 1000);
+                        editor.putString("currentBalance", "1000");
+                        editor.putString("difficulty", "hard");
+                        user.Balance = new BigDecimal(1000);
+                        break;
+                    case R.id.bankruptMid:
+                        editor.putInt("startingBalance", 10000);
+                        editor.putString("currentBalance", "10000");
+                        editor.putString("difficulty", "medium");
+                        user.Balance = new BigDecimal(10000);
+                        break;
+                    case R.id.bankruptRich:
+                        editor.putInt("startingBalance", 10000);
+                        editor.putString("currentBalance", "100000");
+                        editor.putString("difficulty", "easy");
+                        user.Balance = new BigDecimal(100000);
+                        break;
+                }
+                editor.commit();
+            }
+        });
+
+        Button btnRes = (Button)d.findViewById(R.id.btnReset);
+        btnRes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.db.open();
+                MainActivity.db.deleteAllPortfolio();
+                MainActivity.db.close();
+                android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
+                if(currentFragment.getTag() == "F_OVERVIEW")
+                {
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.detach(currentFragment);
+                    ft.attach(currentFragment);
+                    ft.commit();
+                }
+                d.dismiss();
+            }
+        });
+
+
+
+                d.show();
+    }
+
+
+
 
 
     public void CopyDB(InputStream inputStream, OutputStream outputStream) throws IOException
@@ -555,7 +621,7 @@
                         progress = ProgressDialog.show(MainActivity.this, "Declare Bankruptcy",
                                 "Resetting Everything.", true);
 
-
+                        showResetDialog();
                         new Thread(new Runnable() {
                             @Override
                             public void run()

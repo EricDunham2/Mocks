@@ -189,17 +189,17 @@ public class ThreadStock implements Runnable {
                                 TextView percent = (TextView) currentFragment.getView().findViewById(R.id.DetailsPercent);
                                 TextView symbol = (TextView) currentFragment.getView().findViewById(R.id.Symbol);
                                 TextView company = (TextView) currentFragment.getView().findViewById(R.id.DetailsCompany);
-                                if(MainActivity.selectedStock.getQuote().getDayHigh() != null)
+                                if(MainActivity.selectedStock.getQuote().getDayHigh() != null && high != null)
                                     high.setText("High: " + String.format(MainActivity.selectedStock.getQuote().getDayHigh().toString(), "#.00"));
-                                if(MainActivity.selectedStock.getQuote().getPrice() != null)
+                                if(MainActivity.selectedStock.getQuote().getPrice() != null  && value != null)
                                     value.setText("Price: " + String.format(MainActivity.selectedStock.getQuote().getPrice().toString(), "#.00"));
-                                if(MainActivity.selectedStock.getQuote().getDayLow() != null)
+                                if(MainActivity.selectedStock.getQuote().getDayLow() != null  && low != null)
                                     low.setText("Low: " + String.format(MainActivity.selectedStock.getQuote().getDayLow().toString(), "#.00"));
-                                if(MainActivity.selectedStock.getQuote().getDayHigh() != null)
+                                if(MainActivity.selectedStock.getQuote().getDayHigh() != null  && percent != null)
                                     percent.setText("%" + String.format(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString(), "#.00"));
-                                if(MainActivity.selectedStock.getSymbol() != null)
+                                if(MainActivity.selectedStock.getSymbol() != null  && symbol != null)
                                     symbol.setText(MainActivity.selectedStock.getSymbol().toString());
-                                if(MainActivity.selectedStock.getName()!= null)
+                                if(MainActivity.selectedStock.getName()!= null  && company != null)
                                     company.setText(MainActivity.selectedStock.getName().toString());
                             }
                         });

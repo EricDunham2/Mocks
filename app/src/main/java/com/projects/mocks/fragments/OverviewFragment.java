@@ -106,9 +106,13 @@ public class OverviewFragment extends Fragment {
                     }
                   Stock tmp = addThreadStock.singleStockReturn;
 
-                    if(tmp != null || tmp.getQuote()!= null || tmp.getQuote().getPrice() != null) {
-                        userPortfolioStocksCustom stock = new userPortfolioStocksCustom(cursor.getString(cursor.getColumnIndex("Symbol")), cursor.getInt(cursor.getColumnIndex("QTY")),tmp.getQuote().getPrice().doubleValue());
-                        userStocks.add(stock);
+                    if(tmp != null) {
+                        if (tmp.getQuote() != null) {
+                            if (tmp.getQuote().getPrice() != null){
+                                userPortfolioStocksCustom stock = new userPortfolioStocksCustom(cursor.getString(cursor.getColumnIndex("Symbol")), cursor.getInt(cursor.getColumnIndex("QTY")), tmp.getQuote().getPrice().doubleValue());
+                            userStocks.add(stock);
+                            }
+                        }
                     }
                     cursor.moveToNext();
                 }
