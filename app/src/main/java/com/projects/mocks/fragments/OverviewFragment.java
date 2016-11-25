@@ -140,6 +140,7 @@ public class OverviewFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 userPortfolioStocksCustom clk = (userPortfolioStocksCustom) portfolioListView.getItemAtPosition(position);
+                MainActivity.fab.setImageResource(R.drawable.ic_menu_minus);
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);

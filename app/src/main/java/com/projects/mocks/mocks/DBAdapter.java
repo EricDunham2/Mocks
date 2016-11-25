@@ -105,6 +105,16 @@ public class DBAdapter
         return db.delete(PORTFOLIO_TABLE, PORTFOLIO_SYMBOL + "='" + name + "'", null) > 0;
     }
 
+    public Cursor getPortfolioSymbol(String name){
+            return db.query(PORTFOLIO_TABLE,new String[]{PORTFOLIO_QTY}," Symbol = '" + name +"'",null ,null, null,null);
+    }
+    public int updatePortfolioSymbol(String name,int newQTY)
+    {
+        ContentValues args = new ContentValues();
+        args.put(PORTFOLIO_QTY, newQTY);
+        return db.update(PORTFOLIO_TABLE,args,"Symbol = '"+name+"'",null);
+    }
+
     //retrieve functions for the tables
 
     //db.query(Table, column(s), whereClause, whereArgs, groupBy, having, orderBy, limit);

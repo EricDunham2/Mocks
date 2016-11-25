@@ -7,16 +7,13 @@
         import android.content.DialogInterface;
         import android.content.Intent;
         import android.content.SharedPreferences;
-        import android.content.res.Resources;
-        import android.graphics.Color;
+        import android.database.Cursor;
         import android.os.Bundle;
         import android.os.SystemClock;
         import android.support.design.widget.FloatingActionButton;
-        import android.support.v4.content.ContextCompat;
         import android.support.v7.app.AlertDialog;
         import android.support.v7.view.ContextThemeWrapper;
         import android.util.Log;
-        import android.util.TypedValue;
         import android.view.LayoutInflater;
         import android.view.View;
         import android.support.design.widget.NavigationView;
@@ -54,8 +51,6 @@
 
         import yahoofinance.Stock;
 
-        import static com.projects.mocks.mocks.R.attr.txtColor;
-
         public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
@@ -66,7 +61,7 @@
     private ShopFragment sFrag;
     private LeaderboardFragment lFrag;
     private SettingsFragment settingsFrag;
-    private FloatingActionButton fab;
+    public static FloatingActionButton fab;
     private ProgressDialog progress;
     static public ArrayList<Stock> allStocksArrayList;
     static public MarketListAdapter adapter;
@@ -200,11 +195,19 @@
             @Override
             public void onClick(View view)
             {
+                int index = fm.getBackStackEntryCount() - 1;
+                String lastFrag = getFragmentManager().getBackStackEntryAt(index).getName();
                 android.app.FragmentManager fm = getFragmentManager();
                 android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
-                if(currentFragment.getTag().equals("F_DETAILS"))
-                {
-                    showBuyDialog();
+                if(lastFrag.equals("F_MARKET")) {
+                    if (currentFragment.getTag().equals("F_DETAILS")) {
+                        showBuyDialog();
+                    }
+                }
+                if(lastFrag.equals("F_OVERVIEW")) {
+                    if (currentFragment.getTag().equals("F_DETAILS")) {
+                        showSellDialog();
+                    }
                 }
 
             }
@@ -266,7 +269,7 @@
         if(selectedStock.getQuote() == null){return;}
         final Dialog d = new Dialog(MainActivity.this);
         d.setTitle("Number of stocks to purchase");
-        d.setContentView(R.layout.buy_dialog);
+        d.setContentView(R.layout.custom_dialog);
         Button buy = (Button) d.findViewById(R.id.btnBuy);
         Button cancel = (Button) d.findViewById(R.id.btnCancel);
         final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
@@ -284,6 +287,63 @@
                 user.Balance = user.Balance.subtract(selectedStock.getQuote().getPrice().multiply(new BigDecimal(np.getValue())));
                 editor.putString("currentBalance", user.Balance.toString());
                 editor.commit();
+                MainActivity.db.close();
+                d.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                d.dismiss();
+            }
+        });
+        d.show();
+    }
+
+    public void showSellDialog()
+    {
+        if(selectedStock.getQuote() == null){return;}
+        final Dialog d = new Dialog(MainActivity.this);
+        d.setTitle("Number of stocks to sell");
+        d.setContentView(R.layout.custom_dialog);
+        Button sell = (Button) d.findViewById(R.id.btnBuy);
+                sell.setText("Sell");
+        Button cancel = (Button) d.findViewById(R.id.btnCancel);
+        final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
+
+        MainActivity.db.open();
+        Cursor cursor = MainActivity.db.getPortfolioSymbol(selectedStock.getSymbol());
+        int oldQty = 0;
+        if (cursor.moveToFirst()) {
+            cursor.moveToFirst();
+             oldQty = cursor.getInt(cursor.getColumnIndex("QTY"));
+        }
+        MainActivity.db.close();
+
+        int topSellQty = oldQty;
+        np.setMaxValue(topSellQty);
+        np.setMinValue(1);
+        np.setWrapSelectorWheel(false);
+        sell.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                ///Buy shit
+                MainActivity.db.open();
+                boolean deleteRow = false;
+                int updateReturn = 0;
+                int newQTY = np.getMaxValue() - np.getValue();
+                if (newQTY == 0)
+                    deleteRow = db.deletePortfolioRow(selectedStock.getSymbol());
+                else
+                 updateReturn = MainActivity.db.updatePortfolioSymbol(selectedStock.getSymbol(),newQTY);
+
+                if(updateReturn == 1 | deleteRow) {
+                    user.Balance = user.Balance.add(selectedStock.getQuote().getPrice().multiply(new BigDecimal(np.getValue())));
+                    editor.putString("currentBalance", user.Balance.toString());
+                    editor.commit();
+                }
                 MainActivity.db.close();
                 d.dismiss();
             }

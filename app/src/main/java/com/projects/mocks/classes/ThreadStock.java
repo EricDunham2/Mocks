@@ -190,13 +190,13 @@ public class ThreadStock implements Runnable {
                                 TextView symbol = (TextView) currentFragment.getView().findViewById(R.id.Symbol);
                                 TextView company = (TextView) currentFragment.getView().findViewById(R.id.DetailsCompany);
                                 if(MainActivity.selectedStock.getQuote().getDayHigh() != null)
-                                    high.setText(MainActivity.selectedStock.getQuote().getDayHigh().toString());
+                                    high.setText("High: " +MainActivity.selectedStock.getQuote().getDayHigh().toString());
                                 if(MainActivity.selectedStock.getQuote().getPrice() != null)
-                                    value.setText(MainActivity.selectedStock.getQuote().getPrice().toString());
+                                    value.setText("Price: " +MainActivity.selectedStock.getQuote().getPrice().toString());
                                 if(MainActivity.selectedStock.getQuote().getDayLow() != null)
-                                    low.setText(MainActivity.selectedStock.getQuote().getDayLow().toString());
+                                    low.setText("Low: " +MainActivity.selectedStock.getQuote().getDayLow().toString());
                                 if(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent() != null)
-                                    percent.setText(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString());
+                                    percent.setText("%" +MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString());
                                 if(MainActivity.selectedStock.getSymbol() != null)
                                     symbol.setText(MainActivity.selectedStock.getSymbol().toString());
                                 if(MainActivity.selectedStock.getName()!= null)
@@ -208,8 +208,10 @@ public class ThreadStock implements Runnable {
                     }
                     try {
                         Thread.sleep(500);
-                    } catch (Exception e) {
-                        e.getMessage();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        DetailsFragment.detailsClosed = true;
+                        break;
                     }
             }
         }

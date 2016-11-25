@@ -171,6 +171,7 @@ public class DetailsFragment extends Fragment {
         super.onDetach();
         detailsClosed = true;
         try {
+            detailsThread.interrupt();
             detailsThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
