@@ -33,7 +33,8 @@ public class DetailsFragment extends Fragment {
     public String activeStockDetails;
     private RadioGroup rgroup;
     public static boolean detailsPaused;
-
+    public static boolean detailsClosed;
+    Thread detailsThread;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,8 +61,7 @@ public class DetailsFragment extends Fragment {
             detailParams.sym = activeStockDetails;
 
             ThreadStock detailsThreadStock = new ThreadStock(detailParams);
-            detailsThreadStock.df = this;
-            Thread detailsThread = new Thread(detailsThreadStock);
+            detailsThread = new Thread(detailsThreadStock);
             detailsThread.start();
         }catch (Exception e)
         {
@@ -156,12 +156,24 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        detailsClosed = false;
         detailsPaused = false;
     }
 
     @Override
     public void onPause() {
-        super.onResume();
+        super.onPause();
         detailsPaused = true;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        detailsClosed = true;
+        try {
+            detailsThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

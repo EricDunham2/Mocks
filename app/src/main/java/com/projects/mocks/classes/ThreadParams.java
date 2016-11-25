@@ -19,5 +19,4 @@ public class ThreadParams
     public  String sym;
     public Context ctx;
     public  ArrayAdapter<Stock> adapter;
-    public  ArrayList<Stock> output;
 }

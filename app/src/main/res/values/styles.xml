@@ -3,6 +3,7 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
+        <item name="themeName">AppTheme</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -33,6 +34,7 @@
 <!--DARK THEME STARTS HERE -->
     <style name="AppThemeDark" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
+        <item name="themeName">AppThemeDark</item>
         <item name="colorPrimary">@color/colorPrimaryDarkPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkPrimaryDark</item>
         <item name="colorAccent">@color/colorAccentDark</item>

@@ -2,6 +2,7 @@ package com.projects.mocks.fragments;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -12,8 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import com.projects.mocks.mocks.MainActivity;
 import com.projects.mocks.classes.*;
 import com.projects.mocks.mocks.R;
@@ -69,10 +73,9 @@ public class MarketFragment extends Fragment {
         isSearchResults = false;
         midScrolling = false;
         allStocksListView.setAdapter(adapter);
-        if (adapter.getCount() == 0) {
+        if (MainActivity.allStocksArrayList.size() == 0) {
             MainActivity.db.open();
             Cursor cursor = MainActivity.db.getFiftySymbols(databaseIndex);
-
             if (cursor.moveToFirst()) {
                 cursor.moveToFirst();
                 while (!cursor.isAfterLast()) {
@@ -88,11 +91,10 @@ public class MarketFragment extends Fragment {
             for(Stock s : allStocksArrayList)
                 newStocks.add(s.getSymbol());
             allStocksArrayList.clear();
-            adapter.clear();
+            reloadedFragment = true;
         }
 
             ThreadParams addParams = new ThreadParams();
-            addParams.output = allStocksArrayList;
             addParams.adapter = adapter;
             addParams.mth = "ADD_MULTIPLE";
             addParams.ctx = getContext();
@@ -103,7 +105,6 @@ public class MarketFragment extends Fragment {
 
             ThreadParams updateParams = new ThreadParams();
             updateParams.adapter = adapter;
-            updateParams.output = allStocksArrayList;
             updateParams.ctx = getContext();
             updateParams.mth = "UPDATE_MULTIPLE";
             updateStock = new ThreadStock(updateParams);
@@ -111,7 +112,6 @@ public class MarketFragment extends Fragment {
             updateStock.updateRangeTop = 11;
             updateThread = new Thread(updateStock);
             updateThread.start();
-
     }
 
     private void setStockListView() {
@@ -187,7 +187,6 @@ public class MarketFragment extends Fragment {
                     MainActivity.stopThread = true;
                     if (s.toString().equals("")) {
                         newStocks.clear();
-                        adapter.clear();
                         for (String stockSymbol : listViewState)
                             newStocks.add(stockSymbol);
                         listViewState.clear();
@@ -195,14 +194,12 @@ public class MarketFragment extends Fragment {
                     } else {
                         MainActivity.db.open();
                         isSearchResults = true;
-                        if (listViewState.isEmpty())
-                            listViewState = new ArrayList<>(newStocks);
-
-                        allStocksArrayList.clear();
+                        if (listViewState.isEmpty()) {
+                            for(Stock tmps : allStocksArrayList)
+                                listViewState.add(tmps.getSymbol());
+                        }
                         Cursor cursor = MainActivity.db.searchForSymbol(s.toString());
                         newStocks.clear();
-                        adapter.clear();
-
                         if (cursor.moveToFirst()) {
                             cursor.moveToFirst();
                             while (!cursor.isAfterLast()) {
@@ -211,6 +208,7 @@ public class MarketFragment extends Fragment {
                             }
                         }
                     }
+                    allStocksArrayList.clear();
                     MainActivity.stopThread = false;
                     addThread = new Thread(addStocks);
                     addThread.start();
@@ -228,6 +226,7 @@ public class MarketFragment extends Fragment {
     public void onResume() {
         super.onResume();
         marketPaused = false;
+        reloadedFragment = false;
     }
 
     @Override
@@ -242,5 +241,8 @@ public class MarketFragment extends Fragment {
         super.onStop();
         reloadedFragment = true;
     }
+
+
+
 
 }

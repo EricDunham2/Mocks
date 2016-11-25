@@ -7,13 +7,13 @@
     <TextView
         android:layout_width="30dp"
         android:layout_height="50dp"
-        android:id="@+id/leaderboardRank"
+        android:id="@+id/customLayoutLeft"
         android:textSize="20sp"
         android:textColor="?android:attr/colorAccent" />
 
     <TextView
         android:layout_height="50dp"
-        android:id="@+id/leadboardUsername"
+        android:id="@+id/customLayoutCentre"
         android:textSize="20sp"
         android:textColor="?android:attr/colorAccent"
         android:layout_marginLeft="20dp"
@@ -21,7 +21,7 @@
 
     <TextView
         android:layout_height="50dp"
-        android:id="@+id/leaderboardROI"
+        android:id="@+id/customLayoutRight"
         android:layout_marginLeft="15dp"
         android:textColor="?android:attr/colorAccent"
         android:textSize="20sp"

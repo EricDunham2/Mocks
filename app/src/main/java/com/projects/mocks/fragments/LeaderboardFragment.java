@@ -101,9 +101,9 @@ public class LeaderboardFragment extends Fragment {
             User user = getItem(position);
 
             if (user != null) {
-                TextView leftTextView = (TextView) view.findViewById(R.id.leaderboardRank);
-                TextView rightTextView = (TextView) view.findViewById(R.id.leadboardUsername);
-                TextView centreTextView = (TextView) view.findViewById(R.id.leaderboardROI);
+                TextView leftTextView = (TextView) view.findViewById(R.id.customLayoutLeft);
+                TextView rightTextView = (TextView) view.findViewById(R.id.customLayoutCentre);
+                TextView centreTextView = (TextView) view.findViewById(R.id.customLayoutRight);
 
                 if (leftTextView != null) {
                     leftTextView.setText(user.getRank());

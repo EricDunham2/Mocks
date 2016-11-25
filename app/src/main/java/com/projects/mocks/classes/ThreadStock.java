@@ -4,6 +4,7 @@ package com.projects.mocks.classes;
  * Created by Eric on 11/18/2016.
  */
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -41,9 +42,7 @@ public class ThreadStock implements Runnable {
     public  String sym;
     private Context ctx;
     public  ArrayAdapter<Stock> adapter;
-    public  ArrayList<Stock> output;
     public Stock singleStockReturn;
-    public DetailsFragment df;
     public int updateRangeTop;
     public int updateRangeLow;
 
@@ -51,7 +50,6 @@ public class ThreadStock implements Runnable {
     {
         ctx = tp.ctx;
         adapter = tp.adapter;
-        output = tp.output;
         mth = tp.mth;
         from = tp.from;
         to = tp.to;
@@ -110,9 +108,7 @@ public class ThreadStock implements Runnable {
                     ((MainActivity) ctx).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                                adapter.add(stock);
                                 adapter.notifyDataSetChanged();
-
                         }
                     });
                 } catch (Exception e) {
@@ -130,23 +126,27 @@ public class ThreadStock implements Runnable {
         }
     }
 
-    private void addStockToArrayList(Stock s)
+    private void addStockToArrayList(final Stock s)
     {
-        try {
-                output.add(s);
-        } catch (Exception e) {
-            Log.d("Pushback Error:", e.getMessage());
-        }
+        ((MainActivity) ctx).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    MainActivity.allStocksArrayList.add(s);
+                } catch (Exception e) {
+                    Log.d("Pushback Error:", e.getMessage());
+                }
+            }});
     }
 
     private void updateMultiple()
     {
         while(!MainActivity.mFinished) {
             while (!MarketFragment.marketPaused) {
-                synchronized (output) {
+                synchronized (MainActivity.allStocksArrayList) {
                     for (int i = updateRangeLow; i <= updateRangeTop; ++i) {
                         try {
-                            output.get(i).getQuote(true).getPrice();
+                            MainActivity.allStocksArrayList.get(i).getQuote(true).getPrice();
                             ((MainActivity) ctx).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -172,34 +172,42 @@ public class ThreadStock implements Runnable {
 
     private void updateOne()
     {
-        while(!MainActivity.mFinished) {
+        while(!DetailsFragment.detailsClosed) {
             while (!DetailsFragment.detailsPaused) {
                 try {
                     MainActivity.selectedStock = getStockDetails(sym);
-                    if(MainActivity.selectedStock.getQuote() == null || MainActivity.selectedStock == null) {return;}
+                    if(MainActivity.selectedStock == null) {return;}
+                    if(MainActivity.selectedStock.getQuote() == null) {return;}
                     ((MainActivity) ctx).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                TextView high = (TextView) df.getView().findViewById(R.id.DetailsHigh);
-                                TextView value = (TextView) df.getView().findViewById(R.id.DetailsValue);
-                                TextView low = (TextView) df.getView().findViewById(R.id.DetailsLow);
-                                TextView percent = (TextView) df.getView().findViewById(R.id.DetailsPercent);
-                                TextView symbol = (TextView) df.getView().findViewById(R.id.Symbol);
-                                TextView company = (TextView) df.getView().findViewById(R.id.DetailsCompany);
-                                high.setText(MainActivity.selectedStock.getQuote().getDayHigh().toString());
-                                value.setText(MainActivity.selectedStock.getQuote().getPrice().toString());
-                                low.setText(MainActivity.selectedStock.getQuote().getDayLow().toString());
-                                percent.setText(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString());
-                                symbol.setText(MainActivity.selectedStock.getSymbol().toString());
-                                company.setText(MainActivity.selectedStock.getName().toString());
+                                FragmentManager fm = ((MainActivity) ctx).getFragmentManager();
+                                android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
+                                TextView high = (TextView) currentFragment.getView().findViewById(R.id.DetailsHigh);
+                                TextView value = (TextView) currentFragment.getView().findViewById(R.id.DetailsValue);
+                                TextView low = (TextView) currentFragment.getView().findViewById(R.id.DetailsLow);
+                                TextView percent = (TextView) currentFragment.getView().findViewById(R.id.DetailsPercent);
+                                TextView symbol = (TextView) currentFragment.getView().findViewById(R.id.Symbol);
+                                TextView company = (TextView) currentFragment.getView().findViewById(R.id.DetailsCompany);
+                                if(MainActivity.selectedStock.getQuote().getDayHigh() != null)
+                                    high.setText(MainActivity.selectedStock.getQuote().getDayHigh().toString());
+                                if(MainActivity.selectedStock.getQuote().getPrice() != null)
+                                    value.setText(MainActivity.selectedStock.getQuote().getPrice().toString());
+                                if(MainActivity.selectedStock.getQuote().getDayLow() != null)
+                                    low.setText(MainActivity.selectedStock.getQuote().getDayLow().toString());
+                                if(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent() != null)
+                                    percent.setText(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString());
+                                if(MainActivity.selectedStock.getSymbol() != null)
+                                    symbol.setText(MainActivity.selectedStock.getSymbol().toString());
+                                if(MainActivity.selectedStock.getName()!= null)
+                                    company.setText(MainActivity.selectedStock.getName().toString());
                             }
                         });
                     } catch (Exception e) {
                         e.getMessage();
                     }
-
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(500);
                     } catch (Exception e) {
                         e.getMessage();
                     }

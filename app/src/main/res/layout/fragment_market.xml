@@ -2,7 +2,8 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.projects.mocks.fragments.MarketFragment">
+             tools:context="com.projects.mocks.fragments.MarketFragment"
+            android:background="?attr/bgColor">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -10,6 +11,8 @@
         android:layout_width="match_parent"
         android:id="@+id/AllStocks"
         android:layout_marginLeft="15dp"
+        android:textColor="?attr/txtColor"
+        android:background="?attr/bgColor"
         android:layout_marginRight="15dp"
         android:layout_marginTop="15dp"
         android:layout_height="475dp" />
@@ -25,6 +28,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="15dp"
+        android:textColor="?attr/txtColor"
         android:hint="Search For A Symbol..." />
 
 </RelativeLayout>

@@ -3,15 +3,21 @@
         import android.app.Activity;
         import android.app.Dialog;
         import android.app.ProgressDialog;
+        import android.content.Context;
         import android.content.DialogInterface;
         import android.content.Intent;
         import android.content.SharedPreferences;
+        import android.content.res.Resources;
+        import android.graphics.Color;
         import android.os.Bundle;
         import android.os.SystemClock;
         import android.support.design.widget.FloatingActionButton;
+        import android.support.v4.content.ContextCompat;
         import android.support.v7.app.AlertDialog;
         import android.support.v7.view.ContextThemeWrapper;
         import android.util.Log;
+        import android.util.TypedValue;
+        import android.view.LayoutInflater;
         import android.view.View;
         import android.support.design.widget.NavigationView;
         import android.support.v4.view.GravityCompat;
@@ -21,9 +27,11 @@
         import android.support.v7.widget.Toolbar;
         import android.view.Menu;
         import android.view.MenuItem;
+        import android.view.ViewGroup;
         import android.widget.ArrayAdapter;
         import android.widget.Button;
         import android.widget.NumberPicker;
+        import android.widget.TextView;
 
         import com.projects.mocks.classes.*;
         import com.projects.mocks.fragments.InventoryFragment;
@@ -46,6 +54,8 @@
 
         import yahoofinance.Stock;
 
+        import static com.projects.mocks.mocks.R.attr.txtColor;
+
         public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
 {
@@ -59,7 +69,7 @@
     private FloatingActionButton fab;
     private ProgressDialog progress;
     static public ArrayList<Stock> allStocksArrayList;
-    static public ArrayAdapter<Stock> adapter;
+    static public MarketListAdapter adapter;
     static public ReentrantLock allStocksMutex;
     static public ReentrantLock addingMutex;
     public static boolean stopThread;
@@ -99,7 +109,7 @@
         allStocksArrayList = new ArrayList<>();
         databaseIndex = 1;
         stopThread = false;
-        adapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1);
+        adapter = new MarketListAdapter(getApplicationContext(),R.layout.user_layout,allStocksArrayList);
         addingMutex = new ReentrantLock();
         allStocksMutex = new ReentrantLock();
         newStocks = new ArrayList<>();
@@ -272,6 +282,8 @@
                 MainActivity.db.open();
                 MainActivity.db.insertPortfolio(selectedStock.getSymbol(),np.getValue());
                 user.Balance = user.Balance.subtract(selectedStock.getQuote().getPrice().multiply(new BigDecimal(np.getValue())));
+                editor.putString("currentBalance", user.Balance.toString());
+                editor.commit();
                 MainActivity.db.close();
                 d.dismiss();
             }
@@ -512,5 +524,46 @@
     protected void onResume() {
         super.onPause();
         mPaused = false;
+    }
+
+    public class MarketListAdapter extends ArrayAdapter<Stock> {
+
+        private int layoutResource;
+
+        public MarketListAdapter(Context context, int layoutResource, ArrayList<Stock> userStocks) {
+            super(context, layoutResource, userStocks);
+            this.layoutResource = layoutResource;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            View view = convertView;
+
+            if (view == null) {
+                LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+                view = layoutInflater.inflate(layoutResource, null);
+            }
+
+            Stock s = getItem(position);
+
+            if (s != null) {
+                TextView rightTextView = (TextView) view.findViewById(R.id.customLayoutCentre);
+                TextView centreTextView = (TextView) view.findViewById(R.id.customLayoutRight);
+
+                if (rightTextView != null && s != null) {
+                    rightTextView.setText(s.getSymbol());
+                }
+
+                if (centreTextView != null && s != null) {
+                    centreTextView.setText("No Data");
+                    if(s.getQuote() != null)
+                        if(s.getQuote().getPrice() != null)
+                            centreTextView.setText(s.getQuote().getPrice().toString());
+                }
+            }
+
+            return view;
+        }
     }
 }

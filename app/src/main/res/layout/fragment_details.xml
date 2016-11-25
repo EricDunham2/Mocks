@@ -11,7 +11,8 @@
 
 <RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/bgColor">
 
     <TextView
         android:layout_width="match_parent"
@@ -24,10 +25,12 @@
         android:layout_marginTop="13dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
+        android:textColor="?attr/txtColor"
         android:text="N/A" />
 
     <TextView
         android:id="@+id/DetailsCompany"
+        android:textColor="?attr/txtColor"
         android:layout_height="50dp"
         android:layout_below="@+id/Symbol"
         android:layout_alignParentStart="true"
@@ -54,6 +57,7 @@
 
         <RadioButton
             android:id="@+id/rbtnDay"
+            android:textColor="?attr/txtColor"
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="match_parent"
@@ -66,6 +70,7 @@
         <RadioButton
             android:id="@+id/rbtnWeek"
             android:layout_width="match_parent"
+            android:textColor="?attr/txtColor"
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_margin="0dp"
@@ -78,6 +83,7 @@
             android:id="@+id/rbtnMonth"
             android:layout_width="match_parent"
             android:layout_weight="1"
+            android:textColor="?attr/txtColor"
             android:layout_height="match_parent"
             android:layout_margin="0dp"
             android:button="@null"
@@ -88,6 +94,7 @@
         <RadioButton
             android:id="@+id/rbtnYear"
             android:layout_width="match_parent"
+            android:textColor="?attr/txtColor"
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_margin="0dp"
@@ -98,6 +105,7 @@
 
         <RadioButton
             android:id="@+id/rbtnFiveYear"
+            android:textColor="?attr/txtColor"
             android:layout_width="match_parent"
             android:layout_weight="1"
             android:layout_height="match_parent"
@@ -111,6 +119,7 @@
     <TextView
         android:id="@+id/DetailsLow"
         android:layout_width="100dp"
+        android:textColor="?attr/txtColor"
         android:layout_height="25dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -127,6 +136,7 @@
         android:layout_height="60dp"
         android:textAlignment="center"
         android:textSize="25dp"
+        android:textColor="?attr/txtColor"
         android:layout_alignTop="@+id/DetailsPercent"
         android:layout_alignParentEnd="true"
         android:text="N/A" />
@@ -144,6 +154,7 @@
         android:id="@+id/DetailsHigh"
         android:layout_width="100dp"
         android:layout_marginTop="21dp"
+        android:textColor="?attr/txtColor"
         android:layout_height="25dp"
         android:layout_below="@+id/rdogrp"
         android:layout_alignStart="@+id/DetailsLow"
@@ -151,6 +162,7 @@
 
     <TextView
         android:id="@+id/DetailsPercent"
+        android:textColor="?attr/txtColor"
         android:layout_height="40dp"
         android:layout_width="150dp"
         android:textAlignment="center"
