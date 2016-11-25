@@ -36,12 +36,12 @@ import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
 
 public class ThreadStock implements Runnable {
-    public  String mth;
+    private  String mth;
     public  Calendar from;
     public  Calendar to;
-    public  String sym;
+    private  String sym;
     private Context ctx;
-    public  ArrayAdapter<Stock> adapter;
+    private  ArrayAdapter<Stock> adapter;
     public Stock singleStockReturn;
     public int updateRangeTop;
     public int updateRangeLow;
@@ -190,13 +190,13 @@ public class ThreadStock implements Runnable {
                                 TextView symbol = (TextView) currentFragment.getView().findViewById(R.id.Symbol);
                                 TextView company = (TextView) currentFragment.getView().findViewById(R.id.DetailsCompany);
                                 if(MainActivity.selectedStock.getQuote().getDayHigh() != null)
-                                    high.setText("High: " +MainActivity.selectedStock.getQuote().getDayHigh().toString());
+                                    high.setText("High: " + String.format(MainActivity.selectedStock.getQuote().getDayHigh().toString(), "#.00"));
                                 if(MainActivity.selectedStock.getQuote().getPrice() != null)
-                                    value.setText("Price: " +MainActivity.selectedStock.getQuote().getPrice().toString());
+                                    value.setText("Price: " + String.format(MainActivity.selectedStock.getQuote().getPrice().toString(), "#.00"));
                                 if(MainActivity.selectedStock.getQuote().getDayLow() != null)
-                                    low.setText("Low: " +MainActivity.selectedStock.getQuote().getDayLow().toString());
-                                if(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent() != null)
-                                    percent.setText("%" +MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString());
+                                    low.setText("Low: " + String.format(MainActivity.selectedStock.getQuote().getDayLow().toString(), "#.00"));
+                                if(MainActivity.selectedStock.getQuote().getDayHigh() != null)
+                                    percent.setText("%" + String.format(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString(), "#.00"));
                                 if(MainActivity.selectedStock.getSymbol() != null)
                                     symbol.setText(MainActivity.selectedStock.getSymbol().toString());
                                 if(MainActivity.selectedStock.getName()!= null)
@@ -215,7 +215,6 @@ public class ThreadStock implements Runnable {
                     }
             }
         }
-        return;
     }
 
     private int daysBetween(Date d1, Date d2){

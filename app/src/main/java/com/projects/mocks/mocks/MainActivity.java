@@ -199,19 +199,22 @@
                 String lastFrag = getFragmentManager().getBackStackEntryAt(index).getName();
                 android.app.FragmentManager fm = getFragmentManager();
                 android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
-                if(lastFrag.equals("F_MARKET")) {
-                    if (currentFragment.getTag().equals("F_DETAILS")) {
-                        showBuyDialog();
+                if(selectedStock != null) {
+                    if (lastFrag.equals("F_MARKET") & selectedStock.getQuote()!= null) {
+                        if (currentFragment.getTag().equals("F_DETAILS") & selectedStock.getQuote().getPrice()!= null) {
+                            showBuyDialog();
+                        }
                     }
-                }
-                if(lastFrag.equals("F_OVERVIEW")) {
-                    if (currentFragment.getTag().equals("F_DETAILS")) {
-                        showSellDialog();
+                    if (lastFrag.equals("F_OVERVIEW") & selectedStock.getQuote()!= null) {
+                        if (currentFragment.getTag().equals("F_DETAILS") & selectedStock.getQuote().getPrice()!= null) {
+                            showSellDialog();
+                        }
                     }
                 }
 
             }
         });
+        fab.hide();
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -283,7 +286,11 @@
             public void onClick(View v) {
                 ///Buy shit
                 MainActivity.db.open();
-                MainActivity.db.insertPortfolio(selectedStock.getSymbol(),np.getValue());
+                Cursor cursor = MainActivity.db.getPortfolioSymbol(selectedStock.getSymbol());
+                if (cursor.moveToFirst())
+                    MainActivity.db.updatePortfolioSymbol(selectedStock.getSymbol(),(cursor.getInt(cursor.getColumnIndex("QTY")) + np.getValue()));
+                else
+                    MainActivity.db.insertPortfolio(selectedStock.getSymbol(),np.getValue());
                 user.Balance = user.Balance.subtract(selectedStock.getQuote().getPrice().multiply(new BigDecimal(np.getValue())));
                 editor.putString("currentBalance", user.Balance.toString());
                 editor.commit();
@@ -597,7 +604,6 @@
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-
             View view = convertView;
 
             if (view == null) {
@@ -619,10 +625,9 @@
                     centreTextView.setText("No Data");
                     if(s.getQuote() != null)
                         if(s.getQuote().getPrice() != null)
-                            centreTextView.setText(s.getQuote().getPrice().toString());
+                            centreTextView.setText(String.format(s.getQuote().getPrice().toString(), "#.00"));
                 }
             }
-
             return view;
         }
     }

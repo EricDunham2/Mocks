@@ -16,29 +16,29 @@ import android.util.Log;
 public class DBAdapter
 {
     //Symbols table
-    public static final String SYMBOLS_TABLE = "Symbols";
-    public static final String SYMBOLS_ID = "ID";
-    public static final String SYMBOLS_NAME = "Name";
+    private static final String SYMBOLS_TABLE = "Symbols";
+    private static final String SYMBOLS_ID = "ID";
+    private static final String SYMBOLS_NAME = "Name";
 
     //Portfolio table
-    public static final String PORTFOLIO_TABLE = "Portfolio";
-    public static final String PORTFOLIO_ID = "ID";
-    public static final String PORTFOLIO_SYMBOL = "Symbol";
-    public static final String PORTFOLIO_QTY = "QTY";
+    private static final String PORTFOLIO_TABLE = "Portfolio";
+    private static final String PORTFOLIO_ID = "ID";
+    private static final String PORTFOLIO_SYMBOL = "Symbol";
+    private static final String PORTFOLIO_QTY = "QTY";
 
     //database finals
-    static final String DATABASE_NAME = "mocksdb";
-    static final int DATABASE_VERSION = 2;
-    public static final String TAG = "DBAdapter";
+    private static final String DATABASE_NAME = "mocksdb";
+    private static final int DATABASE_VERSION = 2;
+    private static final String TAG = "DBAdapter";
 
     //create statements
-    static final String DATABASE_CREATE_TABLE_SYMBOLS = "CREATE TABLE \"Symbols\" ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `Name` TEXT NOT NULL UNIQUE )";
-    static final String DATABASE_CREATE_TABLE_PORTFOLIO = "CREATE TABLE `Portfolio` ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `Symbol` TEXT NOT NULL UNIQUE, `QTY` INTEGER NOT NULL )";
+    private static final String DATABASE_CREATE_TABLE_SYMBOLS = "CREATE TABLE \"Symbols\" ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `Name` TEXT NOT NULL UNIQUE )";
+    private static final String DATABASE_CREATE_TABLE_PORTFOLIO = "CREATE TABLE `Portfolio` ( `ID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `Symbol` TEXT NOT NULL UNIQUE, `QTY` INTEGER NOT NULL )";
 
-    final Context context;
+    private final Context context;
 
-    DatabaseHelper DBHelper;
-    SQLiteDatabase db;
+    private DatabaseHelper DBHelper;
+    private SQLiteDatabase db;
 
     public DBAdapter(Context ctx)
     {
@@ -61,7 +61,7 @@ public class DBAdapter
             }
             catch (SQLException e)
             {
-                Log.d("DATABASE CREATE ERROR", e.getMessage().toString());
+                Log.d("DATABASE CREATE ERROR", e.getMessage());
             }
         }
 
@@ -139,8 +139,6 @@ public class DBAdapter
     public Cursor getFiftySymbols(int startIndex)
     {
          String whereClause = SYMBOLS_ID + " >= " + startIndex;
-        String[] whereArgs = new String[]{""+startIndex};
-
         return db.query(SYMBOLS_TABLE, new String[]{SYMBOLS_NAME}, whereClause, null, null, null, null, "50");
     }
 }

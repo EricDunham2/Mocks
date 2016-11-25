@@ -48,7 +48,6 @@ public class OverviewFragment extends Fragment {
     TextView marketValue;
     ArrayList<userPortfolioStocksCustom> userStocks;
     ListView portfolioListView;
-    ThreadStock updateStock;
     //DON'T EDIT THIS. Anything you want done in a fragment should go in the "onViewCreated" function.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,16 +78,15 @@ public class OverviewFragment extends Fragment {
         if (MainActivity.navigationView != null)
             MainActivity.navigationView.getMenu().findItem(R.id.nav_overview).setChecked(true);
         if (!getContext().getSharedPreferences("settings", getActivity().CONTEXT_RESTRICTED).getBoolean("firstRun", true)) {
-            FragmentManager fm = getFragmentManager();
-            android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
             userBalance = (TextView) getView().findViewById(R.id.overviewBalance);
             usernameO = (TextView) getView().findViewById(R.id.overviewUsername);
             marketValue = (TextView) getView().findViewById(R.id.overviewMarketValue);
             userStocks = new ArrayList<>();
             usernameO.setText(MainActivity.user.username);
-            userBalance.setText(MainActivity.user.Balance.toString());
+            userBalance.setText(String.format(MainActivity.user.Balance.toString(), "#.000"));
             portfolioListView = (ListView) getView().findViewById(R.id.overviewPortfolio);
             setStockListView();
+            MainActivity.fab.hide();
             MainActivity.db.open();
             Cursor cursor = MainActivity.db.getAllPortfolio();
 
@@ -127,7 +125,7 @@ public class OverviewFragment extends Fragment {
                 } catch (Exception e) {
                     e.getMessage();
                 }
-                marketValue.setText(String.format("~" + totalValue, "#.###"));
+                marketValue.setText(String.format("~" + totalValue, "#.000"));
             }
             OverviewListAdapter overviewListAdapter = new OverviewListAdapter(getContext(), R.layout.user_layout, userStocks);
             portfolioListView.setAdapter(overviewListAdapter);
@@ -181,7 +179,7 @@ public class OverviewFragment extends Fragment {
                 TextView rightTextView = (TextView) view.findViewById(R.id.customLayoutCentre);
                 TextView centreTextView = (TextView) view.findViewById(R.id.customLayoutRight);
                     leftTextView.setText(""+stock.qty);
-                    rightTextView.setText("~"+stock.price);
+                    rightTextView.setText(String.format("~" + stock.price, "#.00"));
                     centreTextView.setText(stock.symbol);
 
             }

@@ -19,6 +19,7 @@ import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.YAxis;
 import com.projects.mocks.classes.ThreadParams;
 import com.projects.mocks.classes.ThreadStock;
+import com.projects.mocks.mocks.MainActivity;
 import com.projects.mocks.mocks.R;
 import com.projects.mocks.mocks.databinding.FragmentDetailsBinding;
 import java.util.Calendar;
@@ -46,6 +47,7 @@ public class DetailsFragment extends Fragment {
     {
         //leave this on top unless you're absolutely sure something needs to go above this
         super.onViewCreated(view, savedInstanceState);
+        MainActivity.fab.show();
         //used for back stacking and making sure the correct nav item is selected.
         chart = (LineChart)getView().findViewById(R.id.DetailsChart);
         setChartParams();
@@ -170,6 +172,7 @@ public class DetailsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         detailsClosed = true;
+        MainActivity.fab.hide();
         try {
             detailsThread.interrupt();
             detailsThread.join();

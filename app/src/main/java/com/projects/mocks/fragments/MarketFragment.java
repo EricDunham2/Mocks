@@ -66,6 +66,7 @@ public class MarketFragment extends Fragment {
     private void fillListView()
     {
         MainActivity.stopThread = false;
+        MainActivity.fab.hide();
         searchSymbolsFor = (EditText)getView().findViewById(R.id.searchStocks);
         allStocksListView = (ListView) getView().findViewById(R.id.AllStocks);
         setStockListView();
@@ -119,7 +120,6 @@ public class MarketFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Stock clk = (Stock) allStocksListView.getItemAtPosition(position);
-                MainActivity.fab.setImageResource(R.drawable.ic_menu_send);
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
@@ -137,7 +137,7 @@ public class MarketFragment extends Fragment {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
-             if(isSearchResults == false)
+             if(!isSearchResults)
                 this.scrollComplete();
             }
 
@@ -145,7 +145,7 @@ public class MarketFragment extends Fragment {
                 int totalItemCount = adapter.getCount();
                 if ((allStocksListView.getLastVisiblePosition() + 1) == totalItemCount &&
                         allStocksListView.getChildAt(allStocksListView.getChildCount() - 1).getBottom() <= allStocksListView.getHeight() &&
-                        midScrolling == false) {
+                        !midScrolling) {
                     MainActivity.db.open();
                     databaseIndex += 50;
                     Cursor cursor = MainActivity.db.getFiftySymbols(databaseIndex);
@@ -186,6 +186,7 @@ public class MarketFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(!reloadedFragment) {
                     MainActivity.stopThread = true;
+                    MainActivity.fab.setImageResource(R.drawable.ic_menu_plus);
                     if (s.toString().equals("")) {
                         newStocks.clear();
                         for (String stockSymbol : listViewState)
@@ -242,8 +243,4 @@ public class MarketFragment extends Fragment {
         super.onStop();
         reloadedFragment = true;
     }
-
-
-
-
 }
