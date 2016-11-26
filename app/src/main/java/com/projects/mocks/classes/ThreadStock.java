@@ -94,6 +94,7 @@ public class ThreadStock implements Runnable {
     {
         MainActivity.addingMutex.lock();
         MarketFragment.midScrolling = true;
+
         try {
             for (Iterator<String> it = MainActivity.newStocks.iterator(); it.hasNext(); ) {
                 if (MainActivity.stopThread) {

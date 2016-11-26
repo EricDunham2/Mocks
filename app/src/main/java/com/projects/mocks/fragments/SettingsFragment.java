@@ -91,6 +91,10 @@ public class SettingsFragment extends PreferenceFragment
                                 editor.commit();
 
                                 //empty the back stack. For some reason, reloading the app while there are items in the back stack causes weird overlay bugs. dont know why.
+                                MainActivity.stopThread = true;
+
+                                while(MainActivity.addingMutex.isLocked()){}
+
                                 FragmentManager fm = getFragmentManager();
                                 fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 

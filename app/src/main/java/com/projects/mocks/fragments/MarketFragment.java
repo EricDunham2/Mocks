@@ -201,7 +201,7 @@ public class MarketFragment extends Fragment {
                             for(Stock tmps : allStocksArrayList)
                                 listViewState.add(tmps.getSymbol());
                         }
-                        Cursor cursor = MainActivity.db.searchForSymbol(s.toString());
+                       Cursor cursor = MainActivity.db.searchForSymbol(s.toString());
                         newStocks.clear();
                         if (cursor.moveToFirst()) {
                             cursor.moveToFirst();
@@ -211,8 +211,9 @@ public class MarketFragment extends Fragment {
                             }
                         }
                     }
-                    allStocksArrayList.clear();
                     MainActivity.stopThread = false;
+                    MainActivity.allStocksArrayList.clear();
+                    adapter.notifyDataSetChanged();
                     addThread = new Thread(addStocks);
                     addThread.start();
                 }

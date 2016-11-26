@@ -18,7 +18,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         style="@style/FillButton"
-        android:backgroundTint="?attr/colorAccent"/>
+        android:backgroundTint="?attr/txtColor"/>
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
