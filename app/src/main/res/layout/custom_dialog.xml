@@ -12,11 +12,10 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:text="Please choose the number of stocks you wish to buy. "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="26dp"
-        android:id="@+id/textView"
+        android:id="@+id/dialogTextView"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
@@ -27,7 +26,7 @@
         android:id="@+id/btnCancel"
         android:layout_alignBaseline="@+id/btnBuy"
         android:layout_alignBottom="@+id/btnBuy"
-        android:layout_alignStart="@+id/textView" />
+        android:layout_alignStart="@+id/dialogTextView" />
 
     <Button
         android:id="@+id/btnBuy"

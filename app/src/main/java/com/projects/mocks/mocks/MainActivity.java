@@ -269,6 +269,8 @@
         if(selectedStock.getQuote() == null){return;}
         final Dialog d = new Dialog(MainActivity.this);
         d.setTitle("Number of stocks to purchase");
+        TextView dialogText =(TextView)d.findViewById(R.id.dialogTextView);
+        dialogText.setText("Choose a number of stocks to Buy.");
         d.setContentView(R.layout.custom_dialog);
         Button buy = (Button) d.findViewById(R.id.btnBuy);
         Button cancel = (Button) d.findViewById(R.id.btnCancel);
@@ -309,6 +311,8 @@
         if(selectedStock.getQuote() == null){return;}
         final Dialog d = new Dialog(MainActivity.this);
         d.setTitle("Number of stocks to sell");
+        TextView dialogText =(TextView)d.findViewById(R.id.dialogTextView);
+        dialogText.setText("Choose a number of stocks to sell.");
         d.setContentView(R.layout.custom_dialog);
         Button sell = (Button) d.findViewById(R.id.btnBuy);
                 sell.setText("Sell");
@@ -379,21 +383,23 @@
                         editor.putString("currentBalance", "1000");
                         editor.putString("difficulty", "hard");
                         user.Balance = new BigDecimal(1000);
+                        user.difficulty = "hard";
                         break;
                     case R.id.bankruptMid:
                         editor.putInt("startingBalance", 10000);
                         editor.putString("currentBalance", "10000");
                         editor.putString("difficulty", "medium");
                         user.Balance = new BigDecimal(10000);
+                        user.difficulty = "medium";
                         break;
                     case R.id.bankruptRich:
-                        editor.putInt("startingBalance", 10000);
+                        editor.putInt("startingBalance", 100000);
                         editor.putString("currentBalance", "100000");
                         editor.putString("difficulty", "easy");
+                        user.difficulty = "easy";
                         user.Balance = new BigDecimal(100000);
                         break;
                 }
-                editor.commit();
             }
         });
 
@@ -412,6 +418,7 @@
                     ft.attach(currentFragment);
                     ft.commit();
                 }
+                editor.commit();
                 d.dismiss();
             }
         });
@@ -666,7 +673,7 @@
             View view = convertView;
 
             if (view == null) {
-                LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+                LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
                 view = layoutInflater.inflate(layoutResource, null);
             }
 
@@ -675,6 +682,8 @@
             if (s != null) {
                 TextView rightTextView = (TextView) view.findViewById(R.id.customLayoutCentre);
                 TextView centreTextView = (TextView) view.findViewById(R.id.customLayoutRight);
+                TextView leftThrowAway = (TextView) view.findViewById(R.id.customLayoutLeft);
+                leftThrowAway.setText("");
 
                 if (rightTextView != null && s != null) {
                     rightTextView.setText(s.getSymbol());
