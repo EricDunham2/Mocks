@@ -3,7 +3,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.projects.mocks.fragments.ScreenSlidePageFragment"
+             tools:context="com.projects.mocks.fragments.SecondIntroFragment"
     android:background="?attr/bgColor">
 
     <!-- TODO: Update blank fragment layout -->
@@ -11,7 +11,8 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/thirdfragment"
-        android:src="@drawable/thirdfragment"
-        android:id="@+id/imageView4"/>
+        app:srcCompat="@drawable/secondscreen"
+        android:src="@drawable/secondscreen"
+        android:id="@+id/imageView3"
+        android:layout_gravity="center"/>
 </FrameLayout>

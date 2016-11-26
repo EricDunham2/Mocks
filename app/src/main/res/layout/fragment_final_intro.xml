@@ -1,21 +1,33 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context="com.projects.mocks.fragments.FinalIntroFragment"
+              android:orientation="vertical"
     android:background="?attr/bgColor">
 
-    <EditText
+
+    <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:layout_marginBottom="44dp"
-        android:id="@+id/etName"
-        android:hint="Your Name"
-        android:textAlignment="center"
-        android:layout_above="@+id/button"
-        android:layout_centerHorizontal="true"/>
+        android:layout_height="303dp"
+        app:srcCompat="@drawable/choosename"
+        android:src="@drawable/choosename"
+        android:id="@+id/imageView10"
+        android:layout_marginBottom="45dp"
+        android:padding="10dp"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/etName"
+            android:hint="Your Name"
+            android:layout_gravity="center"/>
+    </FrameLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -23,8 +35,8 @@
         android:layout_marginBottom="14dp"
         android:id="@+id/tvErrorFinalIntro"
         android:textColor="@color/colorBad"
-        android:layout_above="@+id/button"
-        android:layout_centerHorizontal="true"/>
+        android:layout_gravity="center|bottom"
+        />
 
     <Button
         android:layout_width="wrap_content"
@@ -39,7 +51,7 @@
         android:onClick="onClickGo"
         android:layout_marginBottom="100dp"
         android:id="@+id/button"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_gravity="center|bottom"/>
 
-</RelativeLayout>
+
+</LinearLayout>

@@ -21,7 +21,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".FirstTimeRunActivity"
-                  android:windowSoftInputMode="adjustResize" >
+                  android:windowSoftInputMode="adjustPan"
+                  android:screenOrientation="portrait">
         </activity>
     </application>
 

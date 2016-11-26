@@ -18,7 +18,9 @@
         android:layout_marginTop="26dp"
         android:id="@+id/textView"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"/>
 
     <Button
         android:text="Cancel"
@@ -27,7 +29,8 @@
         android:id="@+id/btnCancel"
         android:layout_alignBaseline="@+id/btnBuy"
         android:layout_alignBottom="@+id/btnBuy"
-        android:layout_alignStart="@+id/textView" />
+        android:layout_alignStart="@+id/textView"
+        android:background="?attr/colorAccent"/>
 
     <Button
         android:id="@+id/btnBuy"
@@ -37,6 +40,7 @@
         android:text="Buy"
         android:layout_marginBottom="20dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:background="?attr/colorAccent"/>
 
 </RelativeLayout>
