@@ -14,19 +14,53 @@
         android:orientation="vertical"
         >
 
-        <!-- TODO: Update blank fragment layout -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:layout_width="100dp"
-            app:srcCompat="@drawable/logosm"
-            android:layout_height="100dp"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center_horizontal"
-            />
+            <ProgressBar
+                    android:id="@+id/yourId"
+                    style="?android:attr/progressBarStyleHorizontal"
+                android:layout_centerHorizontal="true"
+                android:max="100"
+                    android:progress="100"
+                    android:progressDrawable="@drawable/ring"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:clickable="false"
+                android:layout_marginTop="20dp" />
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:textColor="?txtColor"
+                android:id="@+id/overviewBalance"
+                android:textSize="20sp"
+                android:textAlignment="center"
+                android:text="00.00"
+                android:gravity="center"
+                android:layout_width="200dp"
+                android:layout_below="@+id/textView5"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:text="Balance"
+                android:textColor="?txtColor"
+                android:id="@+id/textView5"
+                android:textSize="35sp"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:layout_width="250dp"
+                android:layout_marginTop="108dp"
+                android:layout_alignTop="@+id/yourId"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
+
+        <!-- TODO: Update blank fragment layout -->
 
         <TextView
             android:text="Your Stocks"
-            android:textColor="@color/colorTextDark"
+            android:textColor="?txtColor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textView8"
@@ -54,39 +88,10 @@
             android:divider="?attr/listViewOutlineColor"
             android:dividerHeight="2dp"/>
 
-        <TextView
-            android:text="Balance"
-            android:textColor="@color/colorTextDark"
-            android:id="@+id/textView5"
-            android:layout_width="match_parent"
-            android:textSize="30sp"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:gravity="center"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/colorAccentDark2"
-            android:paddingTop="30dp"
-            android:paddingBottom="0dp"/>
-
-        <TextView
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorTextDark"
-            android:id="@+id/overviewBalance"
-            android:layout_width="match_parent"
-            android:textSize="20sp"
-            android:textAlignment="center"
-            android:text="00.00"
-            android:gravity="center"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:background="@color/colorAccentDark2"
-            android:paddingBottom="30dp"/>
-
 
         <TextView
             android:text="Market Value"
-            android:textColor="@color/colorTextDark"
+            android:textColor="?txtColor"
             android:id="@+id/textView4"
             android:layout_width="match_parent"
             android:textSize="30sp"
@@ -96,11 +101,12 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:background="?attr/colorPrimary"
-            android:paddingTop="30dp"/>
+            android:paddingTop="30dp"
+            android:layout_marginTop="10dp" />
 
         <TextView
             android:layout_height="wrap_content"
-            android:textColor="@color/colorTextDark"
+            android:textColor="?txtColor"
             android:id="@+id/overviewMarketValue"
             android:layout_width="match_parent"
             android:textSize="20sp"

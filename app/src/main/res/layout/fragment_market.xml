@@ -33,7 +33,4 @@
         android:layout_margin="0dp"
         android:divider="?attr/listViewOutlineColor"
         android:dividerHeight="2dp"/>
-
-
-
 </LinearLayout>
