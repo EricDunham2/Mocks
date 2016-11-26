@@ -6,5 +6,7 @@
         <attr name="txtColor" format="color"/>
         <attr name="selectNavColor" format="color"/>
         <attr name="selectButtonColor" format="color"/>
+        <attr name="listViewOutlineColor" format="color"/>
+        <attr name="colorAccent2" format="color"/>
     </declare-styleable>
 </resources>

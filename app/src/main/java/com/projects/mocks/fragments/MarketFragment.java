@@ -58,6 +58,7 @@ public class MarketFragment extends Fragment {
         //leave this on top unless you're absolutely sure something needs to go above this
         super.onViewCreated(view, savedInstanceState);
         //used for back stacking and making sure the correct nav item is selected.
+        MainActivity.fab.hide();
         if (MainActivity.navigationView != null)
             MainActivity.navigationView.getMenu().findItem(R.id.nav_market).setChecked(true);
         fillListView();

@@ -44,7 +44,6 @@ import static com.projects.mocks.mocks.MainActivity.newStocks;
 public class OverviewFragment extends Fragment {
 
     TextView userBalance;
-    TextView usernameO;
     TextView marketValue;
     ArrayList<userPortfolioStocksCustom> userStocks;
     ListView portfolioListView;
@@ -74,7 +73,7 @@ public class OverviewFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //leave this on top unless you're absolutely sure something needs to go above this
         super.onViewCreated(view, savedInstanceState);
-
+        MainActivity.fab.show();
         //used for back stacking and making sure the correct nav item is selected.
         if (MainActivity.navigationView != null)
             MainActivity.navigationView.getMenu().findItem(R.id.nav_overview).setChecked(true);
@@ -82,10 +81,8 @@ public class OverviewFragment extends Fragment {
             FragmentManager fm = getFragmentManager();
             android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
             userBalance = (TextView) getView().findViewById(R.id.overviewBalance);
-            usernameO = (TextView) getView().findViewById(R.id.overviewUsername);
             marketValue = (TextView) getView().findViewById(R.id.overviewMarketValue);
             userStocks = new ArrayList<>();
-            usernameO.setText(MainActivity.user.username);
             userBalance.setText(MainActivity.user.Balance.toString());
             portfolioListView = (ListView) getView().findViewById(R.id.overviewPortfolio);
             setStockListView();

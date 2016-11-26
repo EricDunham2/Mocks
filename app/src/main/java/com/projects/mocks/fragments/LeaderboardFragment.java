@@ -37,7 +37,7 @@ public class LeaderboardFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         //leave this on top unless you're absolutely sure something needs to go above this
         super.onViewCreated(view, savedInstanceState);
-
+        MainActivity.fab.hide();
         //used for back stacking and making sure the correct nav item is selected.
         if (MainActivity.navigationView != null)
             MainActivity.navigationView.getMenu().findItem(R.id.nav_leaderboard).setChecked(true);
@@ -48,6 +48,8 @@ public class LeaderboardFragment extends Fragment {
         leaderboardListView = (ListView) getView().findViewById(R.id.leaderboardListView);
         User[] topPlayers = leaderboard();
         ArrayList<User> topPlayersArrayList = new ArrayList<User>(Arrays.asList(topPlayers));
+        writeUserRank(topPlayersArrayList.get(topPlayersArrayList.size() - 1));
+        topPlayersArrayList.remove(topPlayersArrayList.size() - 1);
         LeaderboardListAdapter threeHorizontalTextViewsAdapter = new LeaderboardListAdapter(getContext(), R.layout.user_layout, topPlayersArrayList);
         leaderboardListView.setAdapter(threeHorizontalTextViewsAdapter);
     }
@@ -62,6 +64,12 @@ public class LeaderboardFragment extends Fragment {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void writeUserRank(User u){
+        TextView tv = (TextView) getView().findViewById(R.id.tvUserRank);
+        if(u != null)
+            tv.setText("You rank #" + u.getRank() + " with a balance of " + u.ROI);
     }
 
     public User[] leaderboard() {

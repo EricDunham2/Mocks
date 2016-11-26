@@ -55,7 +55,7 @@ public class SettingsFragment extends PreferenceFragment
     {
         //leave this on top unless you're absolutely sure something needs to go above this
         super.onViewCreated(view, savedInstanceState);
-
+        MainActivity.fab.hide();
         //get preferences to set theme later.
         settings = getContext().getSharedPreferences("settings", Context.CONTEXT_RESTRICTED);
         editor = settings.edit();

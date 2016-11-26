@@ -66,7 +66,7 @@
     private ShopFragment sFrag;
     private LeaderboardFragment lFrag;
     private SettingsFragment settingsFrag;
-    private FloatingActionButton fab;
+    public static FloatingActionButton fab;
     private ProgressDialog progress;
     static public ArrayList<Stock> allStocksArrayList;
     static public MarketListAdapter adapter;
@@ -206,6 +206,10 @@
                 {
                     showBuyDialog();
                 }
+                else if(currentFragment.getTag().equals("F_OVERVIEW"))
+                {
+                    fm.beginTransaction().replace(currentFragment.getId(), mFrag, "F_MARKET").addToBackStack(currentFragment.getTag()).commit();
+                }
 
             }
         });
@@ -233,21 +237,10 @@
         //getWindow().setNavigationBarColor(getResources().getColor(R.color.colorAccent));
 
         main = this;
-    }
 
-    //no longer needed, but kept here just in case.
-//    public void doAllInserts(){
-//        String line = "";
-//        try (BufferedReader br = new BufferedReader(new InputStreamReader(getAssets().open("tickers.csv")))) {
-//            MainActivity.db.open();
-//            while ((line = br.readLine()) != null) {
-//                MainActivity.db.insertSymbol(line);
-//            }
-//            MainActivity.db.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+        TextView tvUsername = (TextView)navigationView.getHeaderView(0).findViewById(R.id.tcNavUsername);
+        tvUsername.setText(settings.getString("username", ""));
+    }
 
 
     @Override
