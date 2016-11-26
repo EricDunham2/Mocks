@@ -2,21 +2,20 @@
 
         import android.app.Activity;
         import android.app.Dialog;
+        import android.app.FragmentManager;
+        import android.app.FragmentTransaction;
         import android.app.ProgressDialog;
         import android.content.Context;
         import android.content.DialogInterface;
         import android.content.Intent;
         import android.content.SharedPreferences;
-        import android.content.res.Resources;
-        import android.graphics.Color;
+        import android.database.Cursor;
         import android.os.Bundle;
         import android.os.SystemClock;
         import android.support.design.widget.FloatingActionButton;
-        import android.support.v4.content.ContextCompat;
         import android.support.v7.app.AlertDialog;
         import android.support.v7.view.ContextThemeWrapper;
         import android.util.Log;
-        import android.util.TypedValue;
         import android.view.LayoutInflater;
         import android.view.View;
         import android.support.design.widget.NavigationView;
@@ -31,6 +30,8 @@
         import android.widget.ArrayAdapter;
         import android.widget.Button;
         import android.widget.NumberPicker;
+        import android.widget.RadioButton;
+        import android.widget.RadioGroup;
         import android.widget.TextView;
 
         import com.projects.mocks.classes.*;
@@ -53,8 +54,6 @@
         import java.util.concurrent.locks.ReentrantLock;
 
         import yahoofinance.Stock;
-
-        import static com.projects.mocks.mocks.R.attr.txtColor;
 
         public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener
@@ -200,11 +199,21 @@
             @Override
             public void onClick(View view)
             {
+                int index = fm.getBackStackEntryCount() - 1;
+                String lastFrag = getFragmentManager().getBackStackEntryAt(index).getName();
                 android.app.FragmentManager fm = getFragmentManager();
                 android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
-                if(currentFragment.getTag().equals("F_DETAILS"))
-                {
-                    showBuyDialog();
+                if(selectedStock != null) {
+                    if (lastFrag.equals("F_MARKET") & selectedStock.getQuote()!= null) {
+                        if (currentFragment.getTag().equals("F_DETAILS") & selectedStock.getQuote().getPrice()!= null) {
+                            showBuyDialog();
+                        }
+                    }
+                    if (lastFrag.equals("F_OVERVIEW") & selectedStock.getQuote()!= null) {
+                        if (currentFragment.getTag().equals("F_DETAILS") & selectedStock.getQuote().getPrice()!= null) {
+                            showSellDialog();
+                        }
+                    }
                 }
                 else if(currentFragment.getTag().equals("F_OVERVIEW"))
                 {
@@ -213,6 +222,7 @@
 
             }
         });
+        fab.hide();
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -259,7 +269,7 @@
         if(selectedStock.getQuote() == null){return;}
         final Dialog d = new Dialog(MainActivity.this);
         d.setTitle("Number of stocks to purchase");
-        d.setContentView(R.layout.buy_dialog);
+        d.setContentView(R.layout.custom_dialog);
         Button buy = (Button) d.findViewById(R.id.btnBuy);
         Button cancel = (Button) d.findViewById(R.id.btnCancel);
         final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
@@ -271,9 +281,12 @@
         {
             @Override
             public void onClick(View v) {
-                ///Buy shit
                 MainActivity.db.open();
-                MainActivity.db.insertPortfolio(selectedStock.getSymbol(),np.getValue());
+                Cursor cursor = MainActivity.db.getPortfolioSymbol(selectedStock.getSymbol());
+                if (cursor.moveToFirst())
+                    MainActivity.db.updatePortfolioSymbol(selectedStock.getSymbol(),(cursor.getInt(cursor.getColumnIndex("QTY")) + np.getValue()));
+                else
+                    MainActivity.db.insertPortfolio(selectedStock.getSymbol(),np.getValue());
                 user.Balance = user.Balance.subtract(selectedStock.getQuote().getPrice().multiply(new BigDecimal(np.getValue())));
                 editor.putString("currentBalance", user.Balance.toString());
                 editor.commit();
@@ -290,6 +303,126 @@
         });
         d.show();
     }
+
+    public void showSellDialog()
+    {
+        if(selectedStock.getQuote() == null){return;}
+        final Dialog d = new Dialog(MainActivity.this);
+        d.setTitle("Number of stocks to sell");
+        d.setContentView(R.layout.custom_dialog);
+        Button sell = (Button) d.findViewById(R.id.btnBuy);
+                sell.setText("Sell");
+        Button cancel = (Button) d.findViewById(R.id.btnCancel);
+        final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
+
+        MainActivity.db.open();
+        Cursor cursor = MainActivity.db.getPortfolioSymbol(selectedStock.getSymbol());
+        int oldQty = 0;
+        if (cursor.moveToFirst()) {
+            cursor.moveToFirst();
+             oldQty = cursor.getInt(cursor.getColumnIndex("QTY"));
+        }
+        MainActivity.db.close();
+
+        int topSellQty = oldQty;
+        np.setMaxValue(topSellQty);
+        np.setMinValue(1);
+        np.setWrapSelectorWheel(false);
+        sell.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                MainActivity.db.open();
+                boolean deleteRow = false;
+                int updateReturn = 0;
+                int newQTY = np.getMaxValue() - np.getValue();
+                if (newQTY == 0)
+                    deleteRow = db.deletePortfolioRow(selectedStock.getSymbol());
+                else
+                 updateReturn = MainActivity.db.updatePortfolioSymbol(selectedStock.getSymbol(),newQTY);
+
+                if(updateReturn == 1 | deleteRow) {
+                    user.Balance = user.Balance.add(selectedStock.getQuote().getPrice().multiply(new BigDecimal(np.getValue())));
+                    editor.putString("currentBalance", user.Balance.toString());
+                    editor.commit();
+                }
+                MainActivity.db.close();
+                d.dismiss();
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                d.dismiss();
+            }
+        });
+        d.show();
+    }
+
+    public void showResetDialog()
+    {
+        final Dialog d = new Dialog(MainActivity.this);
+        d.setTitle("New Starting Balance");
+        d.setContentView(R.layout.bankrupt);
+
+        RadioGroup rgroup =  (RadioGroup)d.findViewById(R.id.rdogrpBank);
+        rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+        {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId)
+            {
+                switch (checkedId)
+                {
+                    case R.id.bankruptPoor:
+                        editor.putInt("startingBalance", 1000);
+                        editor.putString("currentBalance", "1000");
+                        editor.putString("difficulty", "hard");
+                        user.Balance = new BigDecimal(1000);
+                        break;
+                    case R.id.bankruptMid:
+                        editor.putInt("startingBalance", 10000);
+                        editor.putString("currentBalance", "10000");
+                        editor.putString("difficulty", "medium");
+                        user.Balance = new BigDecimal(10000);
+                        break;
+                    case R.id.bankruptRich:
+                        editor.putInt("startingBalance", 10000);
+                        editor.putString("currentBalance", "100000");
+                        editor.putString("difficulty", "easy");
+                        user.Balance = new BigDecimal(100000);
+                        break;
+                }
+                editor.commit();
+            }
+        });
+
+        Button btnRes = (Button)d.findViewById(R.id.btnReset);
+        btnRes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.db.open();
+                MainActivity.db.deleteAllPortfolio();
+                MainActivity.db.close();
+                android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
+                if(currentFragment.getTag() == "F_OVERVIEW")
+                {
+                    FragmentTransaction ft = fm.beginTransaction();
+                    ft.detach(currentFragment);
+                    ft.attach(currentFragment);
+                    ft.commit();
+                }
+                d.dismiss();
+            }
+        });
+
+
+
+                d.show();
+    }
+
+
+
 
 
     public void CopyDB(InputStream inputStream, OutputStream outputStream) throws IOException
@@ -481,7 +614,7 @@
                         progress = ProgressDialog.show(MainActivity.this, "Declare Bankruptcy",
                                 "Resetting Everything.", true);
 
-
+                        showResetDialog();
                         new Thread(new Runnable() {
                             @Override
                             public void run()
@@ -530,7 +663,6 @@
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-
             View view = convertView;
 
             if (view == null) {
@@ -552,10 +684,9 @@
                     centreTextView.setText("No Data");
                     if(s.getQuote() != null)
                         if(s.getQuote().getPrice() != null)
-                            centreTextView.setText(s.getQuote().getPrice().toString());
+                            centreTextView.setText(String.format(s.getQuote().getPrice().toString(), "#.00"));
                 }
             }
-
             return view;
         }
     }

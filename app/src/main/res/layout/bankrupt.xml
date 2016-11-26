@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="?bgColor"
+    android:layout_height="250dp">
+
+    <TextView
+        android:text="Select your new starting amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:id="@+id/textView2"
+        android:textColor="?txtColor" />
+
+    <Button
+        android:text="Reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="114dp"
+        android:id="@+id/btnReset"
+        android:layout_below="@+id/radioGroup"
+        android:layout_centerHorizontal="true" />
+
+    <RadioGroup
+        android:id="@+id/rdogrpBank"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="35dp"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true">
+
+        <RadioButton
+            android:id="@+id/bankruptPoor"
+            android:layout_width="match_parent"
+            android:textColor="?attr/txtColor"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:button="@null"
+            android:gravity="center"
+            android:text="1000"
+            />
+
+        <RadioButton
+            android:id="@+id/bankruptMid"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:textColor="?attr/txtColor"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:button="@null"
+            android:gravity="center"
+            android:text="10000"
+            />
+
+        <RadioButton
+            android:id="@+id/bankruptRich"
+            android:layout_width="match_parent"
+            android:textColor="?attr/txtColor"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_margin="0dp"
+            android:button="@null"
+            android:gravity="center"
+            android:text="100000"
+            />
+
+    </RadioGroup>
+
+</RelativeLayout>

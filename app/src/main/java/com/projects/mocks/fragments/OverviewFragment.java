@@ -84,8 +84,10 @@ public class OverviewFragment extends Fragment {
             marketValue = (TextView) getView().findViewById(R.id.overviewMarketValue);
             userStocks = new ArrayList<>();
             userBalance.setText(MainActivity.user.Balance.toString());
+            userBalance.setText(String.format(MainActivity.user.Balance.toString(), "#.000"));
             portfolioListView = (ListView) getView().findViewById(R.id.overviewPortfolio);
             setStockListView();
+            MainActivity.fab.hide();
             MainActivity.db.open();
             Cursor cursor = MainActivity.db.getAllPortfolio();
 
@@ -105,9 +107,13 @@ public class OverviewFragment extends Fragment {
                     }
                   Stock tmp = addThreadStock.singleStockReturn;
 
-                    if(tmp != null || tmp.getQuote()!= null || tmp.getQuote().getPrice() != null) {
-                        userPortfolioStocksCustom stock = new userPortfolioStocksCustom(cursor.getString(cursor.getColumnIndex("Symbol")), cursor.getInt(cursor.getColumnIndex("QTY")),tmp.getQuote().getPrice().doubleValue());
-                        userStocks.add(stock);
+                    if(tmp != null) {
+                        if (tmp.getQuote() != null) {
+                            if (tmp.getQuote().getPrice() != null){
+                                userPortfolioStocksCustom stock = new userPortfolioStocksCustom(cursor.getString(cursor.getColumnIndex("Symbol")), cursor.getInt(cursor.getColumnIndex("QTY")), tmp.getQuote().getPrice().doubleValue());
+                            userStocks.add(stock);
+                            }
+                        }
                     }
                     cursor.moveToNext();
                 }
@@ -124,7 +130,7 @@ public class OverviewFragment extends Fragment {
                 } catch (Exception e) {
                     e.getMessage();
                 }
-                marketValue.setText(String.format("~" + totalValue, "#.###"));
+                marketValue.setText(String.format("~" + totalValue, "#.000"));
             }
             OverviewListAdapter overviewListAdapter = new OverviewListAdapter(getContext(), R.layout.user_layout, userStocks);
             portfolioListView.setAdapter(overviewListAdapter);
@@ -137,6 +143,7 @@ public class OverviewFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 userPortfolioStocksCustom clk = (userPortfolioStocksCustom) portfolioListView.getItemAtPosition(position);
+                MainActivity.fab.setImageResource(R.drawable.ic_menu_minus);
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
                 android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
@@ -177,7 +184,7 @@ public class OverviewFragment extends Fragment {
                 TextView rightTextView = (TextView) view.findViewById(R.id.customLayoutCentre);
                 TextView centreTextView = (TextView) view.findViewById(R.id.customLayoutRight);
                     leftTextView.setText(""+stock.qty);
-                    rightTextView.setText("~"+stock.price);
+                    rightTextView.setText(String.format("~" + stock.price, "#.00"));
                     centreTextView.setText(stock.symbol);
 
             }

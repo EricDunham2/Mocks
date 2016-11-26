@@ -172,7 +172,9 @@ public class DetailsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         detailsClosed = true;
+        MainActivity.fab.hide();
         try {
+            detailsThread.interrupt();
             detailsThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -36,12 +36,12 @@ import yahoofinance.histquotes.HistoricalQuote;
 import yahoofinance.histquotes.Interval;
 
 public class ThreadStock implements Runnable {
-    public  String mth;
+    private  String mth;
     public  Calendar from;
     public  Calendar to;
-    public  String sym;
+    private  String sym;
     private Context ctx;
-    public  ArrayAdapter<Stock> adapter;
+    private  ArrayAdapter<Stock> adapter;
     public Stock singleStockReturn;
     public int updateRangeTop;
     public int updateRangeLow;
@@ -189,17 +189,17 @@ public class ThreadStock implements Runnable {
                                 TextView percent = (TextView) currentFragment.getView().findViewById(R.id.DetailsPercent);
                                 TextView symbol = (TextView) currentFragment.getView().findViewById(R.id.Symbol);
                                 TextView company = (TextView) currentFragment.getView().findViewById(R.id.DetailsCompany);
-                                if(MainActivity.selectedStock.getQuote().getDayHigh() != null)
-                                    high.setText(MainActivity.selectedStock.getQuote().getDayHigh().toString());
-                                if(MainActivity.selectedStock.getQuote().getPrice() != null)
-                                    value.setText(MainActivity.selectedStock.getQuote().getPrice().toString());
-                                if(MainActivity.selectedStock.getQuote().getDayLow() != null)
-                                    low.setText(MainActivity.selectedStock.getQuote().getDayLow().toString());
-                                if(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent() != null)
-                                    percent.setText(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString());
-                                if(MainActivity.selectedStock.getSymbol() != null)
+                                if(MainActivity.selectedStock.getQuote().getDayHigh() != null && high != null)
+                                    high.setText("High: " + String.format(MainActivity.selectedStock.getQuote().getDayHigh().toString(), "#.00"));
+                                if(MainActivity.selectedStock.getQuote().getPrice() != null  && value != null)
+                                    value.setText("Price: " + String.format(MainActivity.selectedStock.getQuote().getPrice().toString(), "#.00"));
+                                if(MainActivity.selectedStock.getQuote().getDayLow() != null  && low != null)
+                                    low.setText("Low: " + String.format(MainActivity.selectedStock.getQuote().getDayLow().toString(), "#.00"));
+                                if(MainActivity.selectedStock.getQuote().getDayHigh() != null  && percent != null)
+                                    percent.setText("%" + String.format(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString(), "#.00"));
+                                if(MainActivity.selectedStock.getSymbol() != null  && symbol != null)
                                     symbol.setText(MainActivity.selectedStock.getSymbol().toString());
-                                if(MainActivity.selectedStock.getName()!= null)
+                                if(MainActivity.selectedStock.getName()!= null  && company != null)
                                     company.setText(MainActivity.selectedStock.getName().toString());
                             }
                         });
@@ -208,12 +208,13 @@ public class ThreadStock implements Runnable {
                     }
                     try {
                         Thread.sleep(500);
-                    } catch (Exception e) {
-                        e.getMessage();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        DetailsFragment.detailsClosed = true;
+                        break;
                     }
             }
         }
-        return;
     }
 
     private int daysBetween(Date d1, Date d2){
