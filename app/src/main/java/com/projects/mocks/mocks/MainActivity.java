@@ -268,10 +268,10 @@
     {
         if(selectedStock.getQuote() == null){return;}
         final Dialog d = new Dialog(MainActivity.this);
+        d.setContentView(R.layout.custom_dialog);
         d.setTitle("Number of stocks to purchase");
         TextView dialogText =(TextView)d.findViewById(R.id.dialogTextView);
         dialogText.setText("Choose a number of stocks to Buy.");
-        d.setContentView(R.layout.custom_dialog);
         Button buy = (Button) d.findViewById(R.id.btnBuy);
         Button cancel = (Button) d.findViewById(R.id.btnCancel);
         final NumberPicker np = (NumberPicker) d.findViewById(R.id.numberPicker1);
@@ -310,10 +310,11 @@
     {
         if(selectedStock.getQuote() == null){return;}
         final Dialog d = new Dialog(MainActivity.this);
+        d.setContentView(R.layout.custom_dialog);
         d.setTitle("Number of stocks to sell");
         TextView dialogText =(TextView)d.findViewById(R.id.dialogTextView);
         dialogText.setText("Choose a number of stocks to sell.");
-        d.setContentView(R.layout.custom_dialog);
+
         Button sell = (Button) d.findViewById(R.id.btnBuy);
                 sell.setText("Sell");
         Button cancel = (Button) d.findViewById(R.id.btnCancel);
