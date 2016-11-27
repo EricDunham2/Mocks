@@ -26,6 +26,7 @@ import com.projects.mocks.mocks.MainActivity;
 import com.projects.mocks.mocks.R;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import yahoofinance.YahooFinance;
 import static com.projects.mocks.mocks.MainActivity.adapter;
 import static com.projects.mocks.mocks.MainActivity.databaseIndex;
 import static com.projects.mocks.mocks.MainActivity.newStocks;
+import static com.projects.mocks.mocks.MainActivity.user;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,6 +47,7 @@ public class OverviewFragment extends Fragment {
 
     TextView userBalance;
     TextView marketValue;
+    DecimalFormat df;
     ArrayList<userPortfolioStocksCustom> userStocks;
     ListView portfolioListView;
     ThreadStock updateStock;
@@ -74,17 +77,15 @@ public class OverviewFragment extends Fragment {
         //leave this on top unless you're absolutely sure something needs to go above this
         super.onViewCreated(view, savedInstanceState);
         MainActivity.fab.show();
+        df = new DecimalFormat("0.000");
         //used for back stacking and making sure the correct nav item is selected.
         if (MainActivity.navigationView != null)
             MainActivity.navigationView.getMenu().findItem(R.id.nav_overview).setChecked(true);
         if (!getContext().getSharedPreferences("settings", getActivity().CONTEXT_RESTRICTED).getBoolean("firstRun", true)) {
-            FragmentManager fm = getFragmentManager();
-            android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
             userBalance = (TextView) getView().findViewById(R.id.overviewBalance);
             marketValue = (TextView) getView().findViewById(R.id.overviewMarketValue);
             userStocks = new ArrayList<>();
-            userBalance.setText(MainActivity.user.Balance.toString());
-            userBalance.setText(String.format(MainActivity.user.Balance.toString(), "#.000"));
+            userBalance.setText(df.format(user.Balance));
             portfolioListView = (ListView) getView().findViewById(R.id.overviewPortfolio);
             setStockListView();
             MainActivity.fab.hide();
@@ -130,7 +131,7 @@ public class OverviewFragment extends Fragment {
                 } catch (Exception e) {
                     e.getMessage();
                 }
-                marketValue.setText(String.format("~" + totalValue, "#.000"));
+                marketValue.setText("~" + df.format(totalValue));
             }
             OverviewListAdapter overviewListAdapter = new OverviewListAdapter(getContext(), R.layout.user_layout, userStocks);
             portfolioListView.setAdapter(overviewListAdapter);
@@ -184,7 +185,7 @@ public class OverviewFragment extends Fragment {
                 TextView rightTextView = (TextView) view.findViewById(R.id.customLayoutCentre);
                 TextView centreTextView = (TextView) view.findViewById(R.id.customLayoutRight);
                     leftTextView.setText(""+stock.qty);
-                    rightTextView.setText(String.format("~" + stock.price, "#.00"));
+                    rightTextView.setText("~" + df.format(stock.price));
                     centreTextView.setText(stock.symbol);
 
             }
