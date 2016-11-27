@@ -31,7 +31,7 @@
     <TextView
         android:id="@+id/DetailsCompany"
         android:textColor="?attr/txtColor"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/Symbol"
         android:layout_alignParentStart="true"
         android:layout_width="100dp"
@@ -116,31 +116,6 @@
             />
     </RadioGroup>
 
-    <TextView
-        android:id="@+id/DetailsLow"
-        android:layout_width="100dp"
-        android:textColor="?attr/txtColor"
-        android:layout_height="25dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_below="@+id/DetailsHigh"
-        android:layout_marginTop="11dp"
-        android:text="N/A" />
-
-    <TextView
-        android:id="@+id/DetailsValue"
-        android:layout_width="100dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_alignBottom="@+id/DetailsLow"
-        android:layout_height="60dp"
-        android:textAlignment="center"
-        android:textSize="25dp"
-        android:textColor="?attr/txtColor"
-        android:layout_alignTop="@+id/DetailsPercent"
-        android:layout_alignParentEnd="true"
-        android:text="N/A" />
-
     <com.github.mikephil.charting.charts.LineChart
         android:layout_width="match_parent"
         android:id="@+id/DetailsChart"
@@ -150,28 +125,55 @@
         android:layout_below="@+id/DetailsCompany"
         android:layout_alignParentStart="true"/>
 
-    <TextView
-        android:id="@+id/DetailsHigh"
-        android:layout_width="100dp"
-        android:layout_marginTop="21dp"
-        android:textColor="?attr/txtColor"
-        android:layout_height="25dp"
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/rdogrp"
-        android:layout_alignStart="@+id/DetailsLow"
-        android:text="N/A" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp">
+        <TextView
+            android:id="@+id/DetailsLow"
+            android:layout_width="100dp"
+            android:textColor="?attr/txtColor"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:text="N/A"
+            android:textAlignment="center"
+            android:textSize="20sp" />
 
-    <TextView
-        android:id="@+id/DetailsPercent"
-        android:textColor="?attr/txtColor"
-        android:layout_height="40dp"
-        android:layout_width="150dp"
-        android:textAlignment="center"
-        android:textSize="30dp"
-        android:layout_alignTop="@+id/DetailsHigh"
-        android:layout_toStartOf="@+id/DetailsValue"
-        android:layout_alignBottom="@+id/DetailsLow"
-        android:text="N/A" />
+        <TextView
+            android:id="@+id/DetailsHigh"
+            android:layout_width="100dp"
+            android:textColor="?attr/txtColor"
+            android:layout_height="wrap_content"
+            android:text="N/A"
+            android:layout_marginTop="50dp"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:layout_marginLeft="10dp" />
 
+        <TextView
+            android:id="@+id/DetailsPercent"
+            android:textColor="?attr/txtColor"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="30dp"
+            android:text="N/A"
+            android:layout_marginLeft="150dp"
+            android:layout_width="100dp" />
+
+        <TextView
+            android:id="@+id/DetailsValue"
+            android:layout_width="100dp"
+            android:layout_marginLeft="150dp"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textSize="25dp"
+            android:textColor="?attr/txtColor"
+            android:text="N/A"
+            android:layout_marginTop="50dp" />
+    </FrameLayout>
 </RelativeLayout>
 
 </layout>

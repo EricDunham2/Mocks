@@ -2,7 +2,6 @@ package com.projects.mocks.fragments;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -13,17 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
-
 import com.projects.mocks.mocks.MainActivity;
 import com.projects.mocks.classes.*;
 import com.projects.mocks.mocks.R;
-import java.util.ArrayList;
-import java.util.List;
-
 import yahoofinance.Stock;
 import static com.projects.mocks.mocks.MainActivity.adapter;
 import static com.projects.mocks.mocks.MainActivity.allStocksArrayList;
@@ -40,7 +33,6 @@ public class MarketFragment extends Fragment {
     ThreadStock updateStock;
     ThreadStock addStocks;
     EditText searchSymbolsFor;
-    ArrayList<String> listViewState;
     boolean reloadedFragment = false;
     boolean isSearchResults;
     public static boolean marketPaused;
@@ -61,7 +53,7 @@ public class MarketFragment extends Fragment {
         MainActivity.fab.hide();
         if (MainActivity.navigationView != null)
             MainActivity.navigationView.getMenu().findItem(R.id.nav_market).setChecked(true);
-        fillListView();
+            fillListView();
     }
 
     private void fillListView()
@@ -71,7 +63,6 @@ public class MarketFragment extends Fragment {
         searchSymbolsFor = (EditText)getView().findViewById(R.id.searchStocks);
         allStocksListView = (ListView) getView().findViewById(R.id.AllStocks);
         setStockListView();
-        listViewState = new ArrayList<>();
         isSearchResults = false;
         midScrolling = false;
         allStocksListView.setAdapter(adapter);
@@ -190,16 +181,16 @@ public class MarketFragment extends Fragment {
                     MainActivity.fab.setImageResource(R.drawable.ic_menu_plus);
                     if (s.toString().equals("")) {
                         newStocks.clear();
-                        for (String stockSymbol : listViewState)
+                        for (String stockSymbol : MainActivity.listViewState)
                             newStocks.add(stockSymbol);
-                        listViewState.clear();
+                        MainActivity.listViewState.clear();
                         isSearchResults = false;
                     } else {
                         MainActivity.db.open();
                         isSearchResults = true;
-                        if (listViewState.isEmpty()) {
+                        if (MainActivity.listViewState.isEmpty()) {
                             for(Stock tmps : allStocksArrayList)
-                                listViewState.add(tmps.getSymbol());
+                                MainActivity.listViewState.add(tmps.getSymbol());
                         }
                        Cursor cursor = MainActivity.db.searchForSymbol(s.toString());
                         newStocks.clear();
@@ -243,6 +234,5 @@ public class MarketFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        reloadedFragment = true;
     }
 }

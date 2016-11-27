@@ -21,6 +21,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.google.gson.Gson;
 import com.projects.mocks.mocks.R;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -173,47 +174,54 @@ public class ThreadStock implements Runnable {
 
     private void updateOne()
     {
+
+        try {
+            MainActivity.selectedStock = YahooFinance.get(sym);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         while(!DetailsFragment.detailsClosed) {
             while (!DetailsFragment.detailsPaused) {
-                try {
-                    MainActivity.selectedStock = getStockDetails(sym);
-                    if(MainActivity.selectedStock == null) {return;}
-                    if(MainActivity.selectedStock.getQuote() == null) {return;}
-                    ((MainActivity) ctx).runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                FragmentManager fm = ((MainActivity) ctx).getFragmentManager();
-                                android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
-                                TextView high = (TextView) currentFragment.getView().findViewById(R.id.DetailsHigh);
-                                TextView value = (TextView) currentFragment.getView().findViewById(R.id.DetailsValue);
-                                TextView low = (TextView) currentFragment.getView().findViewById(R.id.DetailsLow);
-                                TextView percent = (TextView) currentFragment.getView().findViewById(R.id.DetailsPercent);
-                                TextView symbol = (TextView) currentFragment.getView().findViewById(R.id.Symbol);
-                                TextView company = (TextView) currentFragment.getView().findViewById(R.id.DetailsCompany);
-                                if(MainActivity.selectedStock.getQuote().getDayHigh() != null && high != null)
-                                    high.setText("High: " + String.format(MainActivity.selectedStock.getQuote().getDayHigh().toString(), "#.00"));
-                                if(MainActivity.selectedStock.getQuote().getPrice() != null  && value != null)
-                                    value.setText("Price: " + String.format(MainActivity.selectedStock.getQuote().getPrice().toString(), "#.00"));
-                                if(MainActivity.selectedStock.getQuote().getDayLow() != null  && low != null)
-                                    low.setText("Low: " + String.format(MainActivity.selectedStock.getQuote().getDayLow().toString(), "#.00"));
-                                if(MainActivity.selectedStock.getQuote().getDayHigh() != null  && percent != null)
-                                    percent.setText("%" + String.format(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString(), "#.00"));
-                                if(MainActivity.selectedStock.getSymbol() != null  && symbol != null)
-                                    symbol.setText(MainActivity.selectedStock.getSymbol().toString());
-                                if(MainActivity.selectedStock.getName()!= null  && company != null)
-                                    company.setText(MainActivity.selectedStock.getName().toString());
-                            }
-                        });
-                    } catch (Exception e) {
-                        e.getMessage();
-                    }
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                        DetailsFragment.detailsClosed = true;
-                        break;
-                    }
+                try{
+                MainActivity.selectedStock = getStockDetails(sym);
+                if (MainActivity.selectedStock == null) {break;}
+                if (MainActivity.selectedStock.getQuote() == null) {break;}
+                            ((MainActivity) ctx).runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    FragmentManager fm = ((MainActivity) ctx).getFragmentManager();
+                                    android.app.Fragment currentFragment = fm.findFragmentById(R.id.mainFrame);
+                                    TextView high = (TextView) currentFragment.getView().findViewById(R.id.DetailsHigh);
+                                    TextView value = (TextView) currentFragment.getView().findViewById(R.id.DetailsValue);
+                                    TextView low = (TextView) currentFragment.getView().findViewById(R.id.DetailsLow);
+                                    TextView percent = (TextView) currentFragment.getView().findViewById(R.id.DetailsPercent);
+                                    TextView symbol = (TextView) currentFragment.getView().findViewById(R.id.Symbol);
+                                    TextView company = (TextView) currentFragment.getView().findViewById(R.id.DetailsCompany);
+                                    if (MainActivity.selectedStock.getQuote().getDayHigh() != null && high != null)
+                                        high.setText("High: " + String.format(MainActivity.selectedStock.getQuote().getDayHigh().toString(), "#.00"));
+                                    if (MainActivity.selectedStock.getQuote().getPrice() != null && value != null)
+                                        value.setText("Price: " + String.format(MainActivity.selectedStock.getQuote().getPrice().toString(), "#.00"));
+                                    if (MainActivity.selectedStock.getQuote().getDayLow() != null && low != null)
+                                        low.setText("Low: " + String.format(MainActivity.selectedStock.getQuote().getDayLow().toString(), "#.00"));
+                                    if (MainActivity.selectedStock.getQuote().getDayHigh() != null && percent != null)
+                                        percent.setText("%" + String.format(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString(), "#.00"));
+                                    if (MainActivity.selectedStock.getSymbol() != null && symbol != null)
+                                        symbol.setText(MainActivity.selectedStock.getSymbol().toString());
+                                    if (MainActivity.selectedStock.getName() != null && company != null)
+                                        company.setText(MainActivity.selectedStock.getName().toString());
+                                }
+                            });
+                        }catch(Exception e){
+                            e.getMessage();
+                        }
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            DetailsFragment.detailsClosed = true;
+                            break;
+                        }
             }
         }
     }

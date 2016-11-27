@@ -2,7 +2,6 @@
 
         import android.app.Activity;
         import android.app.Dialog;
-        import android.app.FragmentManager;
         import android.app.FragmentTransaction;
         import android.app.ProgressDialog;
         import android.content.Context;
@@ -30,7 +29,6 @@
         import android.widget.ArrayAdapter;
         import android.widget.Button;
         import android.widget.NumberPicker;
-        import android.widget.RadioButton;
         import android.widget.RadioGroup;
         import android.widget.TextView;
 
@@ -69,7 +67,6 @@
     private ProgressDialog progress;
     static public ArrayList<Stock> allStocksArrayList;
     static public MarketListAdapter adapter;
-    static public ReentrantLock allStocksMutex;
     static public ReentrantLock addingMutex;
     public static boolean stopThread;
     static public int databaseIndex;
@@ -81,6 +78,8 @@
     public static List<String> newStocks;
     public static NavigationView navigationView;
     public static User user;
+    public static ArrayList<String> listViewState;
+
 
     SharedPreferences settings;
     SharedPreferences.Editor editor;
@@ -110,8 +109,9 @@
         stopThread = false;
         adapter = new MarketListAdapter(getApplicationContext(),R.layout.user_layout,allStocksArrayList);
         addingMutex = new ReentrantLock();
-        allStocksMutex = new ReentrantLock();
         newStocks = new ArrayList<>();
+        listViewState = new ArrayList<>();
+
 
         if(settings.getBoolean("theme", false)){
             setTheme(R.style.AppThemeDark);
