@@ -599,6 +599,11 @@
             else
                 fm.beginTransaction().replace(currentFragment.getId(), lFrag, "F_LEADERBOARD").addToBackStack(currentFragment.getTag()).commit();
         }
+        else if(id == R.id.nav_share)
+        {
+            Intent i = new Intent(this, BeamActivity.class);
+            startActivity(i);
+        }
 
     }
 

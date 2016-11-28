@@ -12,6 +12,10 @@
             android:icon="@drawable/ic_menu_market"
             android:title="Market"/>
         <item
+            android:id="@+id/nav_share"
+            android:icon="@drawable/ic_menu_share"
+            android:title="Share Portfolio"/>
+        <item
             android:id="@+id/nav_inventory"
             android:icon="@drawable/ic_menu_inventory"
             android:title="Inventory"

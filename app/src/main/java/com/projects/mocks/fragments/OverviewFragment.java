@@ -3,6 +3,7 @@ package com.projects.mocks.fragments;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -50,6 +51,8 @@ public class OverviewFragment extends Fragment {
     DecimalFormat df;
     ArrayList<userPortfolioStocksCustom> userStocks;
     ListView portfolioListView;
+    SharedPreferences settings;
+    SharedPreferences.Editor editor;
     ThreadStock updateStock;
     //DON'T EDIT THIS. Anything you want done in a fragment should go in the "onViewCreated" function.
     @Override
@@ -77,6 +80,7 @@ public class OverviewFragment extends Fragment {
         //leave this on top unless you're absolutely sure something needs to go above this
         super.onViewCreated(view, savedInstanceState);
         MainActivity.fab.show();
+
         df = new DecimalFormat("0.000");
         //used for back stacking and making sure the correct nav item is selected.
         if (MainActivity.navigationView != null)
