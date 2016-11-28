@@ -1,6 +1,7 @@
 package com.projects.mocks.classes;
 
 import android.database.Cursor;
+import android.net.ConnectivityManager;
 
 import com.google.gson.Gson;
 import com.projects.mocks.mocks.MainActivity;
@@ -10,6 +11,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -40,6 +42,17 @@ public class ThreadLeaderboard implements Runnable {
             responseCode = update();
         else if (method == "ADD")
             responseCode = add();
+    }
+
+    public boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com"); //You can replace it with your name
+            return !ipAddr.equals("");
+
+        } catch (Exception e) {
+            return false;
+        }
+
     }
 
     public String readResponse(HttpURLConnection conn)
@@ -138,6 +151,8 @@ public class ThreadLeaderboard implements Runnable {
             conn.setRequestProperty("charset","utf-8");
             conn.setRequestProperty("Content-Length",Integer.toString(postDataLength));
             conn.setUseCaches(false);
+            boolean isInternet = isInternetAvailable();
+            if(!isInternet){return 3;}
             try(DataOutputStream wr = new DataOutputStream(conn.getOutputStream()))
             {
                 wr.write(postData);
@@ -155,6 +170,7 @@ public class ThreadLeaderboard implements Runnable {
             return 1; // Passed
         else
             return 2; // Failed insert
+
     }
 
 

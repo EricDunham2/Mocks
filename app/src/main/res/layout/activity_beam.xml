@@ -25,10 +25,10 @@
         android:textAppearance="@android:style/TextAppearance.Material.Medium"
         android:textAlignment="center"
         android:padding="10dp"
-        android:background="@color/colorPrimary"/>
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorWhite"/>
 
     <TextView
-        android:text="SoAndSoAndSo's Portfolio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvPortfolioSummary"
@@ -50,15 +50,6 @@
         android:background="@drawable/shape_border"
         android:divider="?attr/listViewOutlineColor"
         android:id="@+id/lvSymbols"/>
-
-    <Button
-        android:text="Save To File"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/button3"
-        android:layout_marginTop="50dp"
-        style="@style/FillButton"
-        android:backgroundTint="@color/colorBad"/>
 
 </LinearLayout>
 </ScrollView>

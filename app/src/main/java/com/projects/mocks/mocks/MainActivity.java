@@ -128,6 +128,7 @@
         {
             //do stuff if the application is running the first time, such as do the showy showy for the swipe activity, and get their name and poerty level and shit
             Intent i = new Intent(this, FirstTimeRunActivity.class);
+            //finish();
             startActivity(i);
         }
         else
@@ -661,6 +662,8 @@
 
     @Override
     protected void onResume() {
+        if(settings.getBoolean("firstRun", true))
+            finish();
         super.onPause();
         mPaused = false;
     }

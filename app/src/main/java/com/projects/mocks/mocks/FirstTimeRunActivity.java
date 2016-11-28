@@ -2,6 +2,7 @@ package com.projects.mocks.mocks;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.provider.Settings;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -89,6 +90,8 @@ public class FirstTimeRunActivity extends FragmentActivity
                     tvError.setText("Sorry, that user already exists.");
                 else if(response == 2)
                     tvError.setText("Something went wrong. Please try again.");
+                else if(response == 3)
+                    tvError.setText("Cannot add user. No internet connection.");
                 else if(response == 1)
                 {
                     settings = getSharedPreferences("settings", CONTEXT_RESTRICTED);
@@ -98,6 +101,7 @@ public class FirstTimeRunActivity extends FragmentActivity
                     editor.commit();
 
                     Intent i = new Intent(this, MainActivity.class);
+                    finish();
                     startActivity(i);
                 }
             }

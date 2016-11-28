@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -175,6 +176,8 @@ public class ThreadStock implements Runnable {
     private void updateOne()
     {
 
+        final DecimalFormat df = new DecimalFormat("0.000");
+
         try {
             MainActivity.selectedStock = YahooFinance.get(sym);
         } catch (IOException e) {
@@ -199,13 +202,13 @@ public class ThreadStock implements Runnable {
                                     TextView symbol = (TextView) currentFragment.getView().findViewById(R.id.Symbol);
                                     TextView company = (TextView) currentFragment.getView().findViewById(R.id.DetailsCompany);
                                     if (MainActivity.selectedStock.getQuote().getDayHigh() != null && high != null)
-                                        high.setText("High: " + String.format(MainActivity.selectedStock.getQuote().getDayHigh().toString(), "#.00"));
+                                        high.setText("High: " + df.format(MainActivity.selectedStock.getQuote().getDayHigh()));
                                     if (MainActivity.selectedStock.getQuote().getPrice() != null && value != null)
-                                        value.setText("Price: " + String.format(MainActivity.selectedStock.getQuote().getPrice().toString(), "#.00"));
+                                        value.setText("Price:\n " + df.format(MainActivity.selectedStock.getQuote().getPrice()));
                                     if (MainActivity.selectedStock.getQuote().getDayLow() != null && low != null)
-                                        low.setText("Low: " + String.format(MainActivity.selectedStock.getQuote().getDayLow().toString(), "#.00"));
+                                        low.setText("Low: " + df.format(MainActivity.selectedStock.getQuote().getDayLow()));
                                     if (MainActivity.selectedStock.getQuote().getDayHigh() != null && percent != null)
-                                        percent.setText("%" + String.format(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent().toString(), "#.00"));
+                                        percent.setText("%" + df.format(MainActivity.selectedStock.getQuote().getChangeFromAvg50InPercent()));
                                     if (MainActivity.selectedStock.getSymbol() != null && symbol != null)
                                         symbol.setText(MainActivity.selectedStock.getSymbol().toString());
                                     if (MainActivity.selectedStock.getName() != null && company != null)
