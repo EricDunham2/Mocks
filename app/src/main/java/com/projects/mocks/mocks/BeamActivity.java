@@ -37,6 +37,15 @@ public class BeamActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        settings = getSharedPreferences("settings", CONTEXT_RESTRICTED);
+
+        if(settings.getBoolean("theme", false)){
+            setTheme(R.style.AppThemeDark);
+        }
+        else{
+            setTheme(R.style.AppTheme);
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_beam);
 
@@ -56,6 +65,7 @@ public class BeamActivity extends AppCompatActivity
                 while(!c.isAfterLast())
                 {
                     slist.add(c.getString(c.getColumnIndex("Symbol")));
+                    c.moveToNext();
                 }
             }
         }
